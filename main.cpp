@@ -188,7 +188,7 @@ int main()
     //ACTUAL CODING STARTS
     while(true)
     {
-        cout << "Yo. Choose an option.\n";
+        std::cout << "Yo. Choose an option.\n";
 
         break;
     }
