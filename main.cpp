@@ -17,6 +17,10 @@ public:
     {
         std::cout << "Init boost " << name << "\n";
     }
+    void fuckWerrorslmaoicantevenhaveintpriceinmycodesinceitsnotusedyetanditgeneratesawarning()
+    {
+        price++;
+    }
     void decBoost()
     {
         uses--;
