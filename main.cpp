@@ -2,7 +2,6 @@
 #include <cstring>
 #include <string>
 #include <vector>
-#include <ctime>
 #include <deque>
 int kaf = 0, kb = 0;
 class boost
@@ -12,12 +11,13 @@ class boost
     int price;
     float multiplier;
 public:
-    boost (std::string name_ = std::to_string(kb++), int uses_ = 1000, float multiplier_ = 2, int price_ = 300) :
+    explicit boost (std::string name_ = std::to_string(kb++), int uses_ = 1000, float multiplier_ = 2, int price_ = 300) :
     name{name_}, uses{uses_}, price{price_}, multiplier{multiplier_}
     {
         std::cout << "Init boost " << name << "\n";
     }
-    void fuckWerrorslmaoicantevenhaveintpriceinmycodesinceitsnotusedyetanditgeneratesawarning()
+
+    [[maybe_unused]] void fuckWerrorslmaoicantevenhaveintpriceinmycodesinceitsnotusedyetanditgeneratesawarning()
     {
         price++;
     }
@@ -58,12 +58,12 @@ public:
     {
         return name;
     }
-    float getTime() const
+    [[maybe_unused]] float getTime() const
     {
         return timeInterval;
     }
 
-    int getReward() const
+    [[maybe_unused]] int getReward() const
     {
         return reward;
     }
@@ -95,23 +95,23 @@ public:
     {
         balance += x;
     }
-    std::string getName()
+    [[maybe_unused]] std::string getName()
     {
         return name;
     }
-    long long int getBal()
+    [[maybe_unused]] long long int getBal()
     {
         return balance;
     }
-    std::deque<boost> getBoosts()
+    [[maybe_unused]] std::deque<boost> getBoosts()
     {
         return boosts;
     }
-    std::vector<int> getCount()
+    [[maybe_unused]] std::vector<int> getCount()
     {
         return count;
     }
-    std::vector<autoFarmer> getFarmers()
+    [[maybe_unused]] std::vector<autoFarmer> getFarmers()
     {
         return farmers;
     }
@@ -127,11 +127,11 @@ public:
         count = other.count;
         return *this;
     }
-    void addBoost (const boost b)
+    [[maybe_unused]] void addBoost (const boost b)
     {
         boosts.push_back(b);
     }
-    float multi ()
+    [[maybe_unused]] float multi ()
     {
         if(boosts.empty()) return 1;
         else
