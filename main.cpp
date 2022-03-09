@@ -184,5 +184,13 @@ int main()
 
     p.changeBal(10000);
     std::cout << p;
+
+    //ACTUAL CODING STARTS
+    while(true)
+    {
+        cout << "Yo. Choose an option.\n";
+
+        break;
+    }
     return 0;
 }
