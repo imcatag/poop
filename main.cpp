@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include <deque>
+#include <fstream>
+
 int kaf = 0, kb = 0;
 class boost
 {
@@ -119,12 +121,18 @@ public:
     {
         std::cout << "Created profile " << name << "\n";
     }
+    explicit playerProfile(std::string name_, long long int balance_, std::vector<autoFarmer> farmers_, std::vector<int> count_, std::deque<boost> boosts_) :
+    name{name_}, balance{balance_}, farmers{farmers_}, count{count_}, boosts{boosts_}
+    {
+
+    }
     playerProfile& operator=(const playerProfile& other)
     {
-        name = other.name;
+        name = other.name + " copy";
         balance = other.balance;
         farmers = other.farmers;
         count = other.count;
+        boosts = other.boosts;
         return *this;
     }
     [[maybe_unused]] void addBoost (const boost b)
@@ -165,6 +173,7 @@ public:
     }
 };
 
+
 int main()
 {
     //initializing a player
@@ -186,11 +195,42 @@ int main()
     std::cout << p;
 
     //ACTUAL CODING STARTS
+    std::string userinput;
+    bool logged = false;
     while(true)
     {
-        std::cout << "Yo. Choose an option.\n";
+        if(!logged)
+        {
+            std::cout << "Choose a profile";
+            std::ifstream f("players.txt");
+
+            std::string playerName;
+            long long int bal;
+            char[10001] line;
+
+            std::vector<autoFarmer> farmers;
+            std::vector<int> count;
+
+            std::deque<boost> boosts;
+            while(f>>playerName)
+            {
+                f >> bal;
+                f.get();
+                std::getline(f, line);
+
+
+            }
+        }
+        while(true)
+        {
+            std::cout << "Yo. Choose an option.\n";
+            std::cin >> userinput;
+
+            break;
+        }
 
         break;
     }
+
     return 0;
 }
