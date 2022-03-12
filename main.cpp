@@ -220,7 +220,7 @@ int main()
     std::string userInput;
     bool logged = false;
     playerProfile currentProfile;
-    int failcount;
+    int failcount = 0;
     while(true)
     {
         if(!logged)
