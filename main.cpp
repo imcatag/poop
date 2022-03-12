@@ -4,7 +4,7 @@
 #include <vector>
 #include <deque>
 #include <fstream>
-
+#include <cstdlib>
 int kaf = 0, kb = 0;
 class boost
 {
@@ -40,6 +40,11 @@ public:
     {
         return uses;
     }
+
+    int getPrice() const
+    {
+        return price;
+    }
     friend std::ostream& operator<<(std::ostream& os, const boost& p)
     {
         os << "autoFarmer: {\n\tname: " << p.name << "\n\tuses: " << p.uses << "\n\tmultiplier: " << p.multiplier << "}";
@@ -49,10 +54,10 @@ public:
 class autoFarmer
 {
     std::string name;
-    float timeInterval;
+    int timeInterval;
     int reward;
 public:
-    autoFarmer(std::string name_ = std::to_string(kaf++), float timeInterval_ = 2048, int reward_ = 0) : name{name_}, timeInterval(timeInterval_), reward(reward_)
+    autoFarmer(std::string name_ = std::to_string(kaf++), int timeInterval_ = 2048, int reward_ = 0) : name{name_}, timeInterval(timeInterval_), reward(reward_)
     {
         std::cout << "\nconstr init autoFarmer " << name << "\n";
     }
@@ -128,7 +133,7 @@ public:
     }
     playerProfile& operator=(const playerProfile& other)
     {
-        name = other.name + " copy";
+        name = other.name;
         balance = other.balance;
         farmers = other.farmers;
         count = other.count;
@@ -167,12 +172,21 @@ public:
 
         return os;
     }
+    playerProfile(const playerProfile& other) : name{other.name}, balance{other.balance}, farmers{other.farmers}, count{other.count}, boosts{other.boosts}
+    {
+
+    }
     ~playerProfile()
     {
 
     }
 };
 
+void mainMenu()
+{
+    std::cout << "\np to play\ns for shop\nc to create a copy of current profile\nq to quit\n";
+    return;
+}
 
 int main()
 {
@@ -181,13 +195,19 @@ int main()
     playerProfile p {"donk"};
     l.push_back(p);
     std::cout << p;
-    //initialising booster list
+    //init boost list
     std::vector<boost> b;
-    boost b1{"2x1k", 2000, 2, 600}, b2{"3x1k", 1000, 3, 800}, b3{"4x500", 500, 4, 1000};
+    boost   b1{"2x1k", 2000, 2, 600},
+            b2{"3x1k", 1000, 3, 800},
+            b3{"4x500", 500, 4, 1000};
     b.push_back(b1);
     b.push_back(b2);
     b.push_back(b3);
-    //autofarmers mai dureaza :) - sunt usor de setat
+    //init autoFarmer list
+    std::vector<autoFarmer> farm;
+    autoFarmer  f1{"2@300s", 300, 2},
+                f2{"5@600s", 600, 5},
+                f3{"12@1200s", 1200, 12};
 
     //menu hours
 
@@ -195,36 +215,110 @@ int main()
     std::cout << p;
 
     //ACTUAL CODING STARTS
-    std::string userinput;
+    std::string userInput;
     bool logged = false;
+    playerProfile currentProfile;
     while(true)
     {
         if(!logged)
         {
-            std::cout << "Choose a profile";
+            std::cout << "Choose a profile\n";
             std::ifstream f("players.txt");
 
             std::string playerName;
             long long int bal;
-            char[10001] line;
+            char line[10001];
 
             std::vector<autoFarmer> farmers;
             std::vector<int> count;
 
             std::deque<boost> boosts;
-            while(f>>playerName)
+            std::string boostname;
+            int boostuses;
+            while(f>>playerName) // read all playerdata file
             {
+                farmers.clear();
+                count.clear();
+                boosts.clear();
                 f >> bal;
                 f.get();
-                std::getline(f, line);
+                f.getline(line,sizeof(line));
+                char * pch;
 
+                pch = std::strtok(line, " "); // farmers
+                while(pch != NULL)
+                {
+                    for(auto i : farm)
+                    {
+                        bool matching = true;
+                        for(size_t j = 0; j < i.getName().size() ; j ++)
+                            if (i.getName()[j] != pch[j]) {matching = false; break;}
+                        if(matching)
+                        {
+                            farmers.push_back(i);
+                        }
+                    }
+                    pch = std::strtok(NULL, " ");
+                }
 
+                pch = std::strtok(line, " "); // count
+                while(pch != NULL)
+                {
+                    count.push_back(atoi(pch));
+                    pch = std::strtok(NULL, " ");
+                }
+
+                pch = std::strtok(line, " "); // boosts
+                while(pch != NULL)
+                {
+                    boostname = pch;
+                    pch = std::strtok(NULL, " ");
+                    boostuses = atoi(pch);
+
+                    for(auto i : b)
+                    {
+                        bool matching = true;
+                        for(size_t j = 0; j < i.getName().size() ; j ++)
+                            if (i.getName()[j] != pch[j]) {matching = false; break;}
+                        if(matching)
+                        {
+                            boost aub{boostname, boostuses, i.getMultiplier(), i.getPrice()};
+                            boosts.push_back(aub);
+                        }
+                    }
+
+                    pch = std::strtok(NULL, " ");
+                }
+                playerProfile aup {playerName, bal, farmers, count, boosts};
+                l.push_back(aup);
+                std::cout << aup << "\n";
             }
+            f.close();
+            while(true)
+            {
+                 std::cin >> userInput;
+                 bool matching = false;
+                 for(auto i : l)
+                 {
+                     if(userInput == i.getName())
+                     {
+                         matching = true;
+                         currentProfile = i;
+                         std::cout << "profile selected: " << userInput << "\n";
+                         break;
+                     }
+                 }
+                 if(matching) break;
+                 else
+                     std::cout << "profile not found\n";
+            }
+
         }
         while(true)
         {
             std::cout << "Yo. Choose an option.\n";
-            std::cin >> userinput;
+            mainMenu();
+            std::cin >> userInput;
 
             break;
         }

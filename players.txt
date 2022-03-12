@@ -1,10 +1,10 @@
-playername
+playername1
+balance
+farmer1 farmer2 farmer3
+count1 count2 count3
+boost1 uses1 boost2 uses2 boost3 uses3
+playername2
 balance
 farmer1 farmer2
 count1 count2
-boost1 boost2 boost3
-playername
-balance
-farmer1 farmer2
-count1 count2
-boost1 boost2 boost3
+boost1 uses1 boost2 uses2
