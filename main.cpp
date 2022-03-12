@@ -65,7 +65,7 @@ public:
     {
         return name;
     }
-    [[maybe_unused]] float getTime() const
+    [[maybe_unused]] int getTime() const
     {
         return timeInterval;
     }
@@ -208,7 +208,9 @@ int main()
     autoFarmer  f1{"2@300s", 300, 2},
                 f2{"5@600s", 600, 5},
                 f3{"12@1200s", 1200, 12};
-
+    farm.push_back(f1);
+    farm.push_back(f2);
+    farm.push_back(f3);
     //menu hours
 
     p.changeBal(10000);
@@ -218,6 +220,7 @@ int main()
     std::string userInput;
     bool logged = false;
     playerProfile currentProfile;
+    int failcount;
     while(true)
     {
         if(!logged)
@@ -310,7 +313,8 @@ int main()
                  }
                  if(matching) break;
                  else
-                     std::cout << "profile not found\n";
+                 {std::cout << "profile not found\n"; failcount ++;}
+                 if(failcount >= 5) break;
             }
 
         }
