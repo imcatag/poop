@@ -14,9 +14,9 @@ class boost
     float multiplier;
 public:
     explicit boost (std::string name_ = std::to_string(kb++), int uses_ = 1000, float multiplier_ = 2, int price_ = 300) :
-    name{name_}, uses{uses_}, price{price_}, multiplier{multiplier_}
+            name{name_}, uses{uses_}, price{price_}, multiplier{multiplier_}
     {
-        std::cout << "Init boost " << name << "\n";
+        //std::cout << "Init boost " << name << "\n";
     }
 
     [[maybe_unused]] void fuckWerrorslmaoicantevenhaveintpriceinmycodesinceitsnotusedyetanditgeneratesawarning()
@@ -59,7 +59,7 @@ class autoFarmer
 public:
     autoFarmer(std::string name_ = std::to_string(kaf++), int timeInterval_ = 2048, int reward_ = 0) : name{name_}, timeInterval(timeInterval_), reward(reward_)
     {
-        std::cout << "\nconstr init autoFarmer " << name << "\n";
+        //std::cout << "\nconstr init autoFarmer " << name << "\n";
     }
     std::string getName() const
     {
@@ -98,7 +98,7 @@ class playerProfile
     std::deque<boost> boosts;
 
 public:
-    void changeBal(long long int x)
+    [[maybe_unused]] void changeBal(long long int x)
     {
         balance += x;
     }
@@ -122,12 +122,12 @@ public:
     {
         return farmers;
     }
-    explicit playerProfile(std::string name_= "untitled") : name{name_}, balance{0}
+    playerProfile(std::string name_= "untitled") : name{name_}, balance{0}
     {
-        std::cout << "Created profile " << name << "\n";
+        //std::cout << "Created profile " << name << "\n";
     }
-    explicit playerProfile(std::string name_, long long int balance_, std::vector<autoFarmer> farmers_, std::vector<int> count_, std::deque<boost> boosts_) :
-    name{name_}, balance{balance_}, farmers{farmers_}, count{count_}, boosts{boosts_}
+    playerProfile(std::string name_, long long int balance_, std::vector<autoFarmer> farmers_, std::vector<int> count_, std::deque<boost> boosts_) :
+            name{name_}, balance{balance_}, farmers{farmers_}, count{count_}, boosts{boosts_}
     {
 
     }
@@ -158,17 +158,18 @@ public:
     }
     friend std::ostream& operator<<(std::ostream& os, const playerProfile& p)
     {
-        os << "playerProfile: {\n\tname: " << p.name << "\n\tbalance: " << p.balance << "\n\tfarmers:\n{";
+        os << "playerProfile: {\n\tname: " << p.name << "\n\tbalance: " << p.balance << "\n\tfarmers:{";
         for(size_t i = 0; i < p.farmers.size(); i++)
         {
             os<< "\n" << "\t" << p.farmers[i].getName() << " x" << p.count[i];
         }
-        os << "}\n\tqueued boosts:\n{";
-        for(size_t i = 0; i < p.boosts.size(); i++)
+        os << "\n\t}\n\tqueued boosts:{";
+        for(int i = 0; i < std::min(3,int(p.boosts.size())); i++)
         {
-            os << "\n" << "\t" << p.boosts[i].getName();
+            os << "\n" << "\t" << p.boosts[i].getName() << " with " << p.boosts[i].getUses() << " uses";
         }
-        os << "}\n}\n";
+        if(p.boosts.size() > 3) os << "\n\tand " << p.boosts.size() - 3 << " more!";
+        os << "\n\t}\n}\n";
 
         return os;
     }
@@ -184,38 +185,39 @@ public:
 
 void mainMenu()
 {
-    std::cout << "\np to play\ns for shop\nc to create a copy of current profile\nq to quit\n";
+    std::cout << "\np to play\ns for shop\nc to create a copy of current profile\nq to save and quit\n";
     return;
 }
 
-int main()
+std::vector<boost> b;
+std::vector<playerProfile>  l;
+std::vector<autoFarmer> farm;
+
+void initboostfarmer()
 {
-    //initializing a player
-    std::vector<playerProfile>  l;
-    playerProfile p {"donk"};
-    l.push_back(p);
-    std::cout << p;
-    //init boost list
-    std::vector<boost> b;
     boost   b1{"2x1k", 2000, 2, 600},
             b2{"3x1k", 1000, 3, 800},
             b3{"4x500", 500, 4, 1000};
     b.push_back(b1);
     b.push_back(b2);
     b.push_back(b3);
-    //init autoFarmer list
-    std::vector<autoFarmer> farm;
+
     autoFarmer  f1{"2@300s", 300, 2},
-                f2{"5@600s", 600, 5},
-                f3{"12@1200s", 1200, 12};
+            f2{"5@600s", 600, 5},
+            f3{"12@1200s", 1200, 12};
     farm.push_back(f1);
     farm.push_back(f2);
     farm.push_back(f3);
-    //menu hours
-
-    p.changeBal(10000);
-    std::cout << p;
-
+}
+int main()
+{
+    //initializing a player
+    //playerProfile p {"donk"};
+    //l.push_back(p);
+    //std::cout << p;
+    //p.changeBal(10000);
+    //std::cout << p;
+    initboostfarmer();
     //ACTUAL CODING STARTS
     std::string userInput;
     bool logged = false;
@@ -225,7 +227,7 @@ int main()
     {
         if(!logged)
         {
-            std::cout << "Choose a profile\n";
+            std::cout << "Choose a profile or type \'new\' to create a new profile\n";
             std::ifstream f("players.txt");
 
             std::string playerName;
@@ -248,6 +250,7 @@ int main()
                 f.getline(line,sizeof(line));
                 char * pch;
 
+
                 pch = std::strtok(line, " "); // farmers
                 while(pch != NULL)
                 {
@@ -255,7 +258,11 @@ int main()
                     {
                         bool matching = true;
                         for(size_t j = 0; j < i.getName().size() ; j ++)
-                            if (i.getName()[j] != pch[j]) {matching = false; break;}
+                            if (i.getName()[j] != pch[j])
+                            {
+                                matching = false;
+                                break;
+                            }
                         if(matching)
                         {
                             farmers.push_back(i);
@@ -263,14 +270,14 @@ int main()
                     }
                     pch = std::strtok(NULL, " ");
                 }
-
+                f.getline(line,sizeof(line));
                 pch = std::strtok(line, " "); // count
                 while(pch != NULL)
                 {
                     count.push_back(atoi(pch));
                     pch = std::strtok(NULL, " ");
                 }
-
+                f.getline(line,sizeof(line));
                 pch = std::strtok(line, " "); // boosts
                 while(pch != NULL)
                 {
@@ -282,7 +289,11 @@ int main()
                     {
                         bool matching = true;
                         for(size_t j = 0; j < i.getName().size() ; j ++)
-                            if (i.getName()[j] != pch[j]) {matching = false; break;}
+                            if (i.getName()[j] != boostname[j])
+                            {
+                                matching = false;
+                                break;
+                            }
                         if(matching)
                         {
                             boost aub{boostname, boostuses, i.getMultiplier(), i.getPrice()};
@@ -299,30 +310,48 @@ int main()
             f.close();
             while(true)
             {
-                 std::cin >> userInput;
-                 bool matching = false;
-                 for(auto i : l)
-                 {
-                     if(userInput == i.getName())
-                     {
-                         matching = true;
-                         currentProfile = i;
-                         std::cout << "profile selected: " << userInput << "\n";
-                         break;
-                     }
-                 }
-                 if(matching) break;
-                 else
-                 {std::cout << "profile not found\n"; failcount ++;}
-                 if(failcount >= 5) break;
+                std::cin >> userInput;
+                if(userInput == "new")
+                {
+                    std::cout << "Name your profile: ";
+                    std::cin >> userInput;
+                    playerProfile aup {userInput};
+                    currentProfile = aup;
+                    l.push_back(currentProfile);
+                    break;
+                }
+                else
+                {
+
+                    bool matching = false;
+                    for(auto i : l)
+                    {
+                        if(userInput == i.getName())
+                        {
+                            matching = true;
+                            currentProfile = i;
+                            std::cout << "profile selected: " << userInput << "\n";
+                            break;
+                        }
+                    }
+                    if(matching) break;
+                    else
+                    {
+                        std::cout << "profile not found\n";
+                        failcount ++;
+                    }
+                    if(failcount >= 5) break;
+                }
             }
 
         }
         while(true)
         {
-            std::cout << "Yo. Choose an option.\n";
+            system("cls");
+            std::cout << "Yo. Choose an option. Playing on profile "<< currentProfile.getName() << "\n";
             mainMenu();
             std::cin >> userInput;
+            if(userInput[0] == 'q') return 0;
 
             break;
         }
