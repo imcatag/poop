@@ -5,6 +5,11 @@
 #include <deque>
 #include <fstream>
 #include <cstdlib>
+
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 int kaf = 0, kb = 0;
 class boost
 {
