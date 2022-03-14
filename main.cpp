@@ -1,3 +1,5 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <iostream>
 #include <cstring>
 #include <string>
@@ -6,7 +8,7 @@
 #include <fstream>
 #include <cstdlib>
 
-#define _CRT_SECURE_NO_WARNINGS
+
 
 
 int kaf = 0, kb = 0;
@@ -51,7 +53,7 @@ public:
     }
     friend std::ostream& operator<<(std::ostream& os, const boost& p)
     {
-        os << "autoFarmer: {\n\tname: " << p.name << "\n\tuses: " << p.uses << "\n\tmultiplier: " << p.multiplier << "}";
+        os << "boost: {\n\tname: " << p.name << "\n\tuses: " << p.uses << "\n\tmultiplier: " << p.multiplier << "}";
         return os;
     }
 };
@@ -105,6 +107,10 @@ public:
     [[maybe_unused]] void changeBal(long long int x)
     {
         balance += x;
+    }
+    [[maybe_unused]] void setName(std::string s)
+    {
+        name = s;
     }
     [[maybe_unused]] std::string getName()
     {
@@ -196,6 +202,9 @@ void mainMenu()
 std::vector<boost> b;
 std::vector<playerProfile>  l;
 std::vector<autoFarmer> farm;
+playerProfile currentProfile;
+std::string userInput;
+bool logged = false;
 
 void initboostfarmer()
 {
@@ -215,18 +224,11 @@ void initboostfarmer()
 }
 int main()
 {
-    //initializing a player
-    //playerProfile p {"donk"};
-    //l.push_back(p);
-    //std::cout << p;
-    //p.changeBal(10000);
-    //std::cout << p;
     initboostfarmer();
-    //ACTUAL CODING STARTS
-    std::string userInput;
-    bool logged = false;
-    playerProfile currentProfile;
+
+
     int failcount = 0;
+
     while(true)
     {
         if(!logged)
@@ -322,6 +324,7 @@ int main()
                     playerProfile aup {userInput};
                     currentProfile = aup;
                     l.push_back(currentProfile);
+                    logged = true;
                     break;
                 }
                 else
@@ -338,7 +341,7 @@ int main()
                             break;
                         }
                     }
-                    if(matching) break;
+                    if(matching){logged = true; break;}
                     else
                     {
                         std::cout << "profile not found\n";
@@ -355,9 +358,33 @@ int main()
             std::cout << "Yo. Choose an option. Playing on profile "<< currentProfile.getName() << "\n";
             mainMenu();
             std::cin >> userInput;
-            if(userInput[0] == 'q') return 0;
+            if(userInput[0] == 'q' || userInput[0] == 'Q') return 0;
+            else if(userInput[0] == 'c' || userInput[0] == 'C')
+            {
+                playerProfile aup = currentProfile;
+                aup.setName("copy of " + currentProfile.getName());
+                l.push_back(aup);
+            }
+            else if(userInput[0] == 'p' || userInput[0] == 'P')
+            {
 
-            break;
+            }
+            else if(userInput[0] == 's' || userInput[0] == 'S')
+            {
+                system("cls");
+                std::cout << "b for boosts\nf for autofarmers\n";
+                std::cin >> userInput;
+                if(userInput[0] == 'b' || userInput[0] == 'B')
+                    for(auto i : b)
+                    {
+                        std::cout << i << "\n";
+                    }
+                else if(userInput[0] == 'f' || userInput[0] == 'F')
+                    for(auto i : farm)
+                    {
+                        std::cout << i << "\n";
+                    }
+            }
         }
 
         break;
