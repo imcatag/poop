@@ -396,8 +396,9 @@ int main()
                     {
                         std::cout << i << "\n";
                     }
-                else return 0;
+
             }
+            else return 0;
         }
 
         break;
