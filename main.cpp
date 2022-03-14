@@ -8,7 +8,11 @@
 #include <fstream>
 #include <cstdlib>
 
-
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+    #define toclear "cls"
+#else
+    #define toclear "clear"
+#endif
 
 
 int kaf = 0, kb = 0;
@@ -354,11 +358,19 @@ int main()
         }
         while(true)
         {
-            system("cls");
+            system(toclear);
             std::cout << "Yo. Choose an option. Playing on profile "<< currentProfile.getName() << "\n";
             mainMenu();
             std::cin >> userInput;
-            if(userInput[0] == 'q' || userInput[0] == 'Q') return 0;
+            if(userInput[0] == 'q' || userInput[0] == 'Q' || !userInput)
+            {
+                std::ofstream g("players1.txt");
+                for (auto i : l)
+                {
+
+                }
+                return 0;
+            }
             else if(userInput[0] == 'c' || userInput[0] == 'C')
             {
                 playerProfile aup = currentProfile;
@@ -371,9 +383,9 @@ int main()
             }
             else if(userInput[0] == 's' || userInput[0] == 'S')
             {
-                system("cls");
+                system(toclear);
                 std::cout << "b for boosts\nf for autofarmers\n";
-                std::cin >> userInput;
+
                 if(userInput[0] == 'b' || userInput[0] == 'B')
                     for(auto i : b)
                     {
@@ -384,6 +396,7 @@ int main()
                     {
                         std::cout << i << "\n";
                     }
+                std::cin >> userInput;
             }
         }
 
