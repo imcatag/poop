@@ -362,7 +362,7 @@ int main()
             std::cout << "Yo. Choose an option. Playing on profile "<< currentProfile.getName() << "\n";
             mainMenu();
             std::cin >> userInput;
-            if(userInput[0] == 'q' || userInput[0] == 'Q' || !userInput)
+            if(userInput[0] == 'q' || userInput[0] == 'Q')
             {
                 std::ofstream g("players1.txt");
                 for (auto i : l)
@@ -396,7 +396,7 @@ int main()
                     {
                         std::cout << i << "\n";
                     }
-                std::cin >> userInput;
+                else return 0;
             }
         }
 
