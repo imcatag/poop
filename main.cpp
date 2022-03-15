@@ -1,5 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS
-
+//fix strtok in MSVC
 #include <iostream>
 #include <cstring>
 #include <string>
@@ -9,9 +9,11 @@
 #include <cstdlib>
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-    #define toclear "cls"
+#define toclear "cls"
+#define cp "copy"
 #else
-    #define toclear "clear"
+#define toclear "clear"
+#define cp "cp"
 #endif
 
 
@@ -57,7 +59,7 @@ public:
     }
     friend std::ostream& operator<<(std::ostream& os, const boost& p)
     {
-        os << "boost: {\n\tname: " << p.name << "\n\tuses: " << p.uses << "\n\tmultiplier: " << p.multiplier << "}";
+        os << "boost: {\n\tname: " << p.name << "\n\tuses: " << p.uses << "\n\tmultiplier: " << p.multiplier << "\n\tprice: " << p.price << "}";
         return os;
     }
 };
@@ -235,7 +237,7 @@ int main()
 
     while(true)
     {
-        if(!logged)
+        if(!logged) // login, but there is no logout feature yet
         {
             std::cout << "Choose a profile or type \'new\' to create a new profile\n";
             std::ifstream f("players.txt");
@@ -318,26 +320,32 @@ int main()
                 std::cout << aup << "\n";
             }
             f.close();
-            while(true)
+            while(true) // profile selection loop
             {
+                if(logged) break;
                 std::cin >> userInput;
-                if(userInput == "new")
-                    while(true) {
+                if(userInput == "q" || userInput == "Q") return 0;
+                else if(userInput == "new")
+                    while(true)
+                    {
                         std::cout << "Name your profile: ";
                         std::cin >> userInput;
                         bool nameused = false;
-                        for (auto i: l) {
-                            if (i.getName() == userInput) {
+                        for (auto i: l)
+                        {
+                            if (i.getName() == userInput)
+                            {
                                 nameused = true;
                                 break;
                             }
                         }
-                        if (!nameused) {
-                        playerProfile aup{userInput};
-                        currentProfile = aup;
-                        l.push_back(currentProfile);
-                        logged = true;
-                        break;
+                        if (!nameused)
+                        {
+                            playerProfile aup{userInput};
+                            currentProfile = aup;
+                            l.push_back(currentProfile);
+                            logged = true;
+                            break;
                         }
                     }
                 else
@@ -354,7 +362,11 @@ int main()
                             break;
                         }
                     }
-                    if(matching){logged = true; break;}
+                    if(matching)
+                    {
+                        logged = true;
+                        break;
+                    }
                     else
                     {
                         std::cout << "profile not found\n";
@@ -373,7 +385,9 @@ int main()
             std::cin >> userInput;
             if(userInput[0] == 'q' || userInput[0] == 'Q')
             {
-                system("cp players.txt players_obsolete.txt");
+                char cop[1001] = cp;
+                strcat(cop, " players.txt players_obsolete.txt");
+                system(cop);
                 for(size_t i = 0; i < l.size(); i ++)
                 {
                     if(l[i].getName() == currentProfile.getName())
@@ -412,23 +426,62 @@ int main()
             }
             else if(userInput[0] == 'p' || userInput[0] == 'P')
             {
-
+                std::cout << "This is totally implemented.\n";
             }
             else if(userInput[0] == 's' || userInput[0] == 'S')
             {
                 system(toclear);
                 std::cout << "b for boosts\nf for autofarmers\n";
-
+                std::cin >> userInput;
                 if(userInput[0] == 'b' || userInput[0] == 'B')
+                {
+                    system(toclear);
                     for(auto i : b)
                     {
                         std::cout << i << "\n";
                     }
+                    std::cout << "name the boost you want to buy or quit with 'q'\n";
+                    std::cin >> userInput;
+                    if(userInput[0] == 'q' || userInput[0] == 'Q')
+                        continue;
+                    else
+                    {
+                        bool found = false;
+                        for(auto i : b)
+                        {
+                            if(i.getName() == userInput)
+                            {
+                                if(currentProfile.getBal() > i.getPrice())
+                                {
+                                    currentProfile.changeBal(-i.getPrice());
+                                    currentProfile.addBoost(i);
+                                }
+                                else
+                                {
+                                    std::cout << "NO MONEY!\n";
+                                    system("pause");
+                                }
+                                found = true;
+                            }
+                        }
+                        if(!found)
+                        {
+                            std::cout << "Can't find that boost!\n";
+                            system("pause");
+                        }
+                    }
+                }
+
                 else if(userInput[0] == 'f' || userInput[0] == 'F')
+                {
+                    system(toclear);
                     for(auto i : farm)
                     {
                         std::cout << i << "\n";
                     }
+                    std::cout << "This is totally implemented.\n";
+                    system("pause");
+                }
             }
             else return 0;
         }
