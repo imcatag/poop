@@ -322,15 +322,24 @@ int main()
             {
                 std::cin >> userInput;
                 if(userInput == "new")
-                {
-                    std::cout << "Name your profile: ";
-                    std::cin >> userInput;
-                    playerProfile aup {userInput};
-                    currentProfile = aup;
-                    l.push_back(currentProfile);
-                    logged = true;
-                    break;
-                }
+                    while(true) {
+                        std::cout << "Name your profile: ";
+                        std::cin >> userInput;
+                        bool nameused = false;
+                        for (auto i: l) {
+                            if (i.getName() == userInput) {
+                                nameused = true;
+                                break;
+                            }
+                        }
+                        if (!nameused) {
+                        playerProfile aup{userInput};
+                        currentProfile = aup;
+                        l.push_back(currentProfile);
+                        logged = true;
+                        break;
+                        }
+                    }
                 else
                 {
 
@@ -364,9 +373,33 @@ int main()
             std::cin >> userInput;
             if(userInput[0] == 'q' || userInput[0] == 'Q')
             {
-                std::ofstream g("players1.txt");
+                system("cp players.txt players_obsolete.txt");
+                for(size_t i = 0; i < l.size(); i ++)
+                {
+                    if(l[i].getName() == currentProfile.getName())
+                        l.erase(l.begin() + i);
+                }
+                l.push_back(currentProfile);
+                std::ofstream g("players.txt");
                 for (auto i : l)
                 {
+                    g << i.getName() << "\n";
+                    g << i.getBal() << "\n";
+                    for(auto j : i.getFarmers())
+                    {
+                        g << j.getName() << " ";
+                    }
+                    g << "\n";
+                    for(auto j : i.getCount())
+                    {
+                        g << j << " ";
+                    }
+                    g << "\n";
+                    for(size_t j = 0; j < i.getBoosts().size(); j ++)
+                    {
+                        g << i.getBoosts()[j].getName() << " " << i.getBoosts()[j].getUses() << " ";
+                    }
+                    g << "\n";
 
                 }
                 return 0;
@@ -396,7 +429,6 @@ int main()
                     {
                         std::cout << i << "\n";
                     }
-
             }
             else return 0;
         }
