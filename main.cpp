@@ -76,15 +76,15 @@ public:
     {
         return name;
     }
-    [[maybe_unused]] int getTime() const
+    /*[[maybe_unused]] int getTime() const
     {
         return timeInterval;
-    }
+    }*/
 
-    [[maybe_unused]] int getReward() const
+    /*[[maybe_unused]] int getReward() const
     {
         return reward;
-    }
+    }*/
     friend std::ostream& operator<<(std::ostream& os, const autoFarmer& p)
     {
         os << "autoFarmer: {\n\tname: " << p.name << "\n\tbalance: " << p.timeInterval << "\n\treward: " << p.reward;
@@ -238,7 +238,7 @@ void wordlistvector()
     for(int i = 1; i <= 16750; i++)
     {
         f >> word;
-        for(int j=1; j<= log(16750-i)/log(10) + 1; j++)
+        for(int j=1; j<= log(16750 - i + 1)/log(10) + 1; j++)
         {
             wl.push_back(word);
         }
@@ -515,7 +515,7 @@ int main()
                             totalvalue += letterVal[i - 'a'];
                         }
                     }
-                    w = std::max(0, numberowords * totalvalue * (100 - nonmatch*nonmatch) / 100 / nr) * currentProfile.multi();
+                    w = int(std::max(0, numberowords * totalvalue * (100 - nonmatch*nonmatch) / 100 / nr) * currentProfile.multi());
                     currentProfile.changeBal(w);
                     std::cout << w;
                     for (int i = 1; i <= 200000000; i ++)
