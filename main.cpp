@@ -238,7 +238,7 @@ void wordlistvector()
     for(int i = 1; i <= 16750; i++)
     {
         f >> word;
-        for(int j=1; j<= log(16749 - i )/log(10) + 1; j++)
+        for(int j=1; j<= log(16751 - i )/log(10) + 1; j++)
         {
             wl.push_back(word);
         }
