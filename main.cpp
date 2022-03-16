@@ -7,6 +7,8 @@
 #include <deque>
 #include <fstream>
 #include <cstdlib>
+#include <cmath>
+#include "effolkronium/random.hpp"
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 #define toclear "cls"
@@ -16,6 +18,7 @@
 #define cp "cp"
 #endif
 
+using Random = effolkronium::random_static;
 
 int kaf = 0, kb = 0;
 class boost
@@ -31,10 +34,6 @@ public:
         //std::cout << "Init boost " << name << "\n";
     }
 
-    [[maybe_unused]] void fuckWerrorslmaoicantevenhaveintpriceinmycodesinceitsnotusedyetanditgeneratesawarning()
-    {
-        price++;
-    }
     void decBoost()
     {
         uses--;
@@ -204,13 +203,16 @@ void mainMenu()
     std::cout << "\np to play\ns for shop\nc to create a copy of current profile\nq to save and quit\n";
     return;
 }
-
+std::vector<std::string> wl;
 std::vector<boost> b;
 std::vector<playerProfile>  l;
 std::vector<autoFarmer> farm;
 playerProfile currentProfile;
 std::string userInput;
 bool logged = false;
+int letterVal[] = {1, 3, 3, 2, 1, 4,
+                   2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10,
+                   1, 1, 1, 1, 4, 4, 8, 4, 10}; // from scrabble, idk if accurate
 
 void initboostfarmer()
 {
@@ -228,10 +230,26 @@ void initboostfarmer()
     farm.push_back(f2);
     farm.push_back(f3);
 }
+
+void wordlistvector()
+{
+    std::string word;
+    std::ifstream f("smallwordlist.txt");
+    for(int i = 1; i <= 16750; i++)
+    {
+        f >> word;
+        for(int j=1; j<= log(16750-i)/log(10) + 1; j++)
+        {
+            wl.push_back(word);
+        }
+    }
+    //std::cout << wl.size();
+    return;
+}
 int main()
 {
     initboostfarmer();
-
+    wordlistvector();
 
     int failcount = 0;
 
@@ -424,9 +442,88 @@ int main()
                 aup.setName("copy of " + currentProfile.getName());
                 l.push_back(aup);
             }
-            else if(userInput[0] == 'p' || userInput[0] == 'P')
+            else if(userInput[0] == 'p' || userInput[0] == 'P') // play cycle
             {
-                std::cout << "This is totally implemented.\n";
+                //std::cout << "This is totally implemented.\n";
+                std::cout << "q to quit\n";
+                //sleep but better lmao
+                for (int i = 1; i <= 100000000; i ++)
+                {
+                    i++;
+                    i--;
+                }
+                std::cout << "GET READY TO TYPE.\n";
+                for (int i = 1; i <= 100000000; i ++)
+                {
+                    i++;
+                    i--;
+                }
+                std::cout << "3.\n";
+                for (int i = 1; i <= 100000000; i ++)
+                {
+                    i++;
+                    i--;
+                }
+                std::cout << "2.\n";
+                for (int i = 1; i <= 100000000; i ++)
+                {
+                    i++;
+                    i--;
+                }
+                std::cout << "1.\n";
+                for (int i = 1; i <= 40000000; i ++)
+                {
+                    i++;
+                    i--;
+                }
+                std::cout << "GO!\n";
+                for (int i = 1; i <= 40000000; i ++)
+                {
+                    i++;
+                    i--;
+                }
+                getline(std::cin, userInput);
+                while(true)
+                {
+                    system(toclear);
+                    std::string s = "";
+                    int nr = 0;
+                    int totalvalue = 0;
+                    int numberowords = Random::get(10,12);
+                    int nonmatch = 0;
+                    int w = 0;
+                    for(int i = 1; i <= numberowords; i ++)
+                    {
+                        int wordrand = Random::get(0,int(wl.size()-1));
+                        if(i != 1) s+= " ";
+                        s += wl[wordrand];
+                    }
+                    std::cout << s << "\n";
+                    getline(std::cin, userInput);
+                    if(userInput == "q" || userInput == "Q" || userInput == "")
+                        break;
+                    for (unsigned long long int i = 0; i < std::min(s.size(), userInput.size()); i++)
+                    {
+                        if (s[i] != userInput[i])
+                            nonmatch++;
+                    }
+                    for(char i : s)
+                    {
+                        if(i!=' ')
+                        {
+                            nr ++;
+                            totalvalue += letterVal[i - 'a'];
+                        }
+                    }
+                    w = std::max(0, numberowords * totalvalue * (100 - nonmatch*nonmatch) / 100 / nr) * currentProfile.multi();
+                    currentProfile.changeBal(w);
+                    std::cout << w;
+                    for (int i = 1; i <= 200000000; i ++)
+                    {
+                        i++;
+                        i--;
+                    }
+                }
             }
             else if(userInput[0] == 's' || userInput[0] == 'S')
             {
