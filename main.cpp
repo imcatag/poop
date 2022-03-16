@@ -28,7 +28,7 @@ class boost
     int price;
     float multiplier;
 public:
-    explicit boost (std::string name_ = std::to_string(kb++), int uses_ = 1000, float multiplier_ = 2, int price_ = 300) :
+    explicit boost (const std::string& name_ = std::to_string(kb++), int uses_ = 1000, float multiplier_ = 2, int price_ = 300) :
             name{name_}, uses{uses_}, price{price_}, multiplier{multiplier_}
     {
         //std::cout << "Init boost " << name << "\n";
@@ -238,7 +238,7 @@ void wordlistvector()
     for(int i = 1; i <= 16750; i++)
     {
         f >> word;
-        for(int j=1; j<= log(16750 - i + 1)/log(10) + 1; j++)
+        for(int j=1; j<= log(16749 - i )/log(10) + 1; j++)
         {
             wl.push_back(word);
         }
@@ -500,7 +500,7 @@ int main()
                     }
                     std::cout << s << "\n";
                     getline(std::cin, userInput);
-                    if(userInput == "q" || userInput == "Q" || userInput == "")
+                    if(userInput == "q" || userInput == "Q" || userInput.empty())
                         break;
                     for (unsigned long long int i = 0; i < std::min(s.size(), userInput.size()); i++)
                     {
