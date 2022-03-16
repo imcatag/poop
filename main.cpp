@@ -8,7 +8,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <cmath>
-//#include "effolkronium/random.hpp"
+#include "ext/random.hpp"
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 #define toclear "cls"
@@ -18,7 +18,7 @@
 #define cp "cp"
 #endif
 
-//using Random = effolkronium::random_static;
+using Random = effolkronium::random_static;
 
 int kaf = 0, kb = 0;
 class boost
@@ -485,17 +485,16 @@ int main()
                 getline(std::cin, userInput);
                 while(true)
                 {
-                    srand (int(time(NULL)));
                     system(toclear);
                     std::string s = "";
                     int nr = 0;
                     int totalvalue = 0;
-                    int numberowords = rand()%3 + 10;
+                    int numberowords = Random::get(10,12);
                     int nonmatch = 0;
                     int w = 0;
                     for(int i = 1; i <= numberowords; i ++)
                     {
-                        int wordrand = rand()%(wl.size()-1);
+                        int wordrand = Random::get(0,int(wl.size()-1));
                         if(i != 1) s+= " ";
                         s += wl[wordrand];
                     }
