@@ -68,7 +68,7 @@ class autoFarmer
     int timeInterval;
     int reward;
 public:
-    autoFarmer(std::string name_ = std::to_string(kaf++), int timeInterval_ = 2048, int reward_ = 0) : name{name_}, timeInterval(timeInterval_), reward(reward_)
+    autoFarmer(const std::string& name_ = std::to_string(kaf++), int timeInterval_ = 2048, int reward_ = 0) : name{name_}, timeInterval(timeInterval_), reward(reward_)
     {
         //std::cout << "\nconstr init autoFarmer " << name << "\n";
     }
@@ -113,7 +113,7 @@ public:
     {
         balance += x;
     }
-    [[maybe_unused]] void setName(std::string s)
+    [[maybe_unused]] void setName(const std::string& s)
     {
         name = s;
     }
@@ -137,11 +137,11 @@ public:
     {
         return farmers;
     }
-    playerProfile(std::string name_= "untitled") : name{name_}, balance{0}
+    playerProfile(const std::string& name_= "untitled") : name{name_}, balance{0}
     {
         //std::cout << "Created profile " << name << "\n";
     }
-    playerProfile(std::string name_, long long int balance_, std::vector<autoFarmer> farmers_, std::vector<int> count_, std::deque<boost> boosts_) :
+    playerProfile(const std::string& name_, long long int balance_, const std::vector<autoFarmer>& farmers_, const std::vector<int>& count_,const std::deque<boost>& boosts_) :
             name{name_}, balance{balance_}, farmers{farmers_}, count{count_}, boosts{boosts_}
     {
 
@@ -155,7 +155,7 @@ public:
         boosts = other.boosts;
         return *this;
     }
-    [[maybe_unused]] void addBoost (const boost b)
+    [[maybe_unused]] void addBoost (const boost& b)
     {
         boosts.push_back(b);
     }
