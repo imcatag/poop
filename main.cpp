@@ -485,7 +485,7 @@ int main()
                 getline(std::cin, userInput);
                 while(true)
                 {
-                    srand (time(NULL));
+                    srand (int(time(NULL)));
                     system(toclear);
                     std::string s = "";
                     int nr = 0;
