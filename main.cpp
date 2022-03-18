@@ -234,7 +234,7 @@ void initboostfarmer()
 void wordlistvector()
 {
     std::string word;
-    std::ifstream f("smallwordlist.txt");
+    std::ifstream f("../smallwordlist.txt");
     for(int i = 1; i <= 16750; i++)
     {
         f >> word;
@@ -258,7 +258,7 @@ int main()
         if(!logged) // login, but there is no logout feature yet
         {
             std::cout << "Choose a profile or type \'new\' to create a new profile\n";
-            std::ifstream f("players.txt");
+            std::ifstream f("../players.txt");
 
             std::string playerName;
             long long int bal;
@@ -404,7 +404,7 @@ int main()
             if(userInput[0] == 'q' || userInput[0] == 'Q')
             {
                 char cop[1001] = cp;
-                strcat(cop, " players.txt players_obsolete.txt");
+                strcat(cop, " ../players.txt ../players_obsolete.txt");
                 system(cop);
                 for(size_t i = 0; i < l.size(); i ++)
                 {
@@ -412,7 +412,7 @@ int main()
                         l.erase(l.begin() + i);
                 }
                 l.push_back(currentProfile);
-                std::ofstream g("players.txt");
+                std::ofstream g("../players.txt");
                 for (auto i : l)
                 {
                     g << i.getName() << "\n";
@@ -517,7 +517,7 @@ int main()
                     }
                     w = int(std::max(0, numberowords * totalvalue * (100 - nonmatch*nonmatch) / 100 / nr) * currentProfile.multi());
                     currentProfile.changeBal(w);
-                    std::cout << w;
+                    std::cout << w << "\n";
                     for (int i = 1; i <= 200000000; i ++)
                     {
                         i++;
