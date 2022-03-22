@@ -12,6 +12,7 @@
 #include "boost.h"
 #include "autoFarmer.h"
 #include "playerProfile.h"
+#include "wordlist.h"
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 #define toclear "cls"
@@ -30,7 +31,7 @@ void mainMenu()
     std::cout << "\np to play\ns for shop\nc to create a copy of current profile\nq to save and quit\n";
     return;
 }
-std::vector<std::string> wl;
+
 std::vector<boost> b;
 std::vector<playerProfile>  l;
 std::vector<autoFarmer> farm;
@@ -58,25 +59,9 @@ void initboostfarmer()
     farm.push_back(f3);
 }
 
-void wordlistvector()
-{
-    std::string word;
-    std::ifstream f("../smallwordlist.txt");
-    for(int i = 1; i <= 16750; i++)
-    {
-        f >> word;
-        for(int j=1; j<= log(16751 - i )/log(10) + 1; j++)
-        {
-            wl.push_back(word);
-        }
-    }
-    //std::cout << wl.size();
-    return;
-}
 int main()
 {
     initboostfarmer();
-    wordlistvector();
 
     int failcount = 0;
 
