@@ -70,7 +70,7 @@ int main()
         if(!logged) // login, but there is no logout feature yet
         {
             std::cout << "Choose a profile or type \'new\' to create a new profile\n";
-            std::ifstream f("../players.txt");
+            std::ifstream f("players.txt");
 
             std::string playerName;
             long long int bal;
@@ -225,7 +225,7 @@ int main()
                         l.erase(l.begin() + i);
                 }
                 l.push_back(currentProfile);
-                std::ofstream g("../players.txt");
+                std::ofstream g("players.txt");
                 for (auto i : l)
                 {
                     g << i.getName() << "\n";
