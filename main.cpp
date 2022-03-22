@@ -9,6 +9,9 @@
 #include <cstdlib>
 #include <cmath>
 #include "ext/random.hpp"
+#include "boost.h"
+#include "autoFarmer.h"
+#include "playerProfile.h"
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 #define toclear "cls"
@@ -20,183 +23,7 @@
 
 using Random = effolkronium::random_static;
 
-int kaf = 0, kb = 0;
-class boost
-{
-    std::string name;
-    int uses;
-    int price;
-    float multiplier;
-public:
-    explicit boost (const std::string& name_ = std::to_string(kb++), int uses_ = 1000, float multiplier_ = 2, int price_ = 300) :
-            name{name_}, uses{uses_}, price{price_}, multiplier{multiplier_}
-    {
-        //std::cout << "Init boost " << name << "\n";
-    }
 
-    void decBoost()
-    {
-        uses--;
-    }
-    std::string getName() const
-    {
-        return name;
-    }
-    float getMultiplier() const
-    {
-        return multiplier;
-    }
-
-    int getUses() const
-    {
-        return uses;
-    }
-
-    int getPrice() const
-    {
-        return price;
-    }
-    friend std::ostream& operator<<(std::ostream& os, const boost& p)
-    {
-        os << "boost: {\n\tname: " << p.name << "\n\tuses: " << p.uses << "\n\tmultiplier: " << p.multiplier << "\n\tprice: " << p.price << "}";
-        return os;
-    }
-};
-class autoFarmer
-{
-    std::string name;
-    int timeInterval;
-    int reward;
-public:
-    autoFarmer(const std::string& name_ = std::to_string(kaf++), int timeInterval_ = 2048, int reward_ = 0) : name{name_}, timeInterval(timeInterval_), reward(reward_)
-    {
-        //std::cout << "\nconstr init autoFarmer " << name << "\n";
-    }
-    std::string getName() const
-    {
-        return name;
-    }
-    /*[[maybe_unused]] int getTime() const
-    {
-        return timeInterval;
-    }*/
-
-    /*[[maybe_unused]] int getReward() const
-    {
-        return reward;
-    }*/
-    friend std::ostream& operator<<(std::ostream& os, const autoFarmer& p)
-    {
-        os << "autoFarmer: {\n\tname: " << p.name << "\n\tbalance: " << p.timeInterval << "\n\treward: " << p.reward;
-        return os;
-    }
-
-    ~autoFarmer()
-    {
-
-    }
-
-};
-
-class playerProfile
-{
-    std::string name;
-    long long int balance;
-
-    std::vector<autoFarmer> farmers;
-    std::vector<int> count;
-
-    std::deque<boost> boosts;
-
-public:
-    [[maybe_unused]] void changeBal(long long int x)
-    {
-        balance += x;
-    }
-    [[maybe_unused]] void setName(const std::string& s)
-    {
-        name = s;
-    }
-    [[maybe_unused]] std::string getName()
-    {
-        return name;
-    }
-    [[maybe_unused]] long long int getBal()
-    {
-        return balance;
-    }
-    [[maybe_unused]] std::deque<boost> getBoosts()
-    {
-        return boosts;
-    }
-    [[maybe_unused]] std::vector<int> getCount()
-    {
-        return count;
-    }
-    [[maybe_unused]] std::vector<autoFarmer> getFarmers()
-    {
-        return farmers;
-    }
-    playerProfile(const std::string& name_= "untitled") : name{name_}, balance{0}
-    {
-        //std::cout << "Created profile " << name << "\n";
-    }
-    playerProfile(const std::string& name_, long long int balance_, const std::vector<autoFarmer>& farmers_, const std::vector<int>& count_,const std::deque<boost>& boosts_) :
-            name{name_}, balance{balance_}, farmers{farmers_}, count{count_}, boosts{boosts_}
-    {
-
-    }
-    playerProfile& operator=(const playerProfile& other)
-    {
-        name = other.name;
-        balance = other.balance;
-        farmers = other.farmers;
-        count = other.count;
-        boosts = other.boosts;
-        return *this;
-    }
-    [[maybe_unused]] void addBoost (const boost& b)
-    {
-        boosts.push_back(b);
-    }
-    [[maybe_unused]] float multi ()
-    {
-        if(boosts.empty()) return 1;
-        else
-        {
-            boosts[0].decBoost();
-            if(boosts[0].getUses() <= 0)  boosts.pop_front();
-            if(boosts.empty()) return 1;
-            else
-                return(boosts[0].getMultiplier());
-        }
-    }
-    friend std::ostream& operator<<(std::ostream& os, const playerProfile& p)
-    {
-        os << "playerProfile: {\n\tname: " << p.name << "\n\tbalance: " << p.balance << "\n\tfarmers:{";
-        for(size_t i = 0; i < p.farmers.size(); i++)
-        {
-            os<< "\n" << "\t" << p.farmers[i].getName() << " x" << p.count[i];
-        }
-        os << "\n\t}\n\tqueued boosts:{";
-        for(int i = 0; i < std::min(3,int(p.boosts.size())); i++)
-        {
-            os << "\n" << "\t" << p.boosts[i].getName() << " with " << p.boosts[i].getUses() << " uses";
-        }
-        if(p.boosts.size() > 3) os << "\n\tand " << p.boosts.size() - 3 << " more!";
-        os << "\n\t}\n}\n";
-
-        return os;
-    }
-    playerProfile(const playerProfile& other) : name{other.name}, balance{other.balance}, farmers{other.farmers}, count{other.count}, boosts{other.boosts}
-    {
-
-    }
-    ~playerProfile()
-    {
-
-    }
-};
 
 void mainMenu()
 {
@@ -404,8 +231,9 @@ int main()
             if(userInput[0] == 'q' || userInput[0] == 'Q')
             {
                 char cop[1001] = cp;
-                strcat(cop, " ../players.txt ../players_obsolete.txt");
+                strcat(cop, " players.txt players_obsolete.txt");
                 system(cop);
+                // std::cout << cop;
                 for(size_t i = 0; i < l.size(); i ++)
                 {
                     if(l[i].getName() == currentProfile.getName())
