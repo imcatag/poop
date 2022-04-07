@@ -54,7 +54,7 @@ int main()
     playerProfile currentProfile;
     std::string userInput;
     bool logged = false;
-    int letterVal[] = {1, 3, 3, 2, 1, 4,
+    const int letterVal[] = {1, 3, 3, 2, 1, 4,
                        2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10,
                        1, 1, 1, 1, 4, 4, 8, 4, 10}; // from scrabble, idk if accurate
     int failcount = 0;
@@ -284,11 +284,11 @@ int main()
                 while(true)
                 {
                     std::string s = "";
-                    int nr = 0;
+
                     int totalvalue = 0;
                     int numberowords = Random::get(10,12);
                     int nonmatch = 0;
-                    int w = 0;
+
                     for(int i = 1; i <= numberowords; i ++)
                     {
                         int wordrand = Random::get(0,int(arrsize-1));
@@ -301,6 +301,7 @@ int main()
                         break;
 
                     if(abs(int(s.size()) - int(userInput.size())) < 3) {
+                        int nr = 0;
                         for (unsigned long long int i = 0; i < std::min(s.size(), userInput.size()); i++) {
                             if (s[i] != userInput[i])
                                 nonmatch++;
@@ -311,7 +312,7 @@ int main()
                                 totalvalue += letterVal[i - 'a'];
                             }
                         }
-                        w = int(std::max(0, numberowords * totalvalue * (100 - nonmatch * nonmatch) / 100 / nr) *
+                        int w = int(std::max(0, numberowords * totalvalue * (100 - nonmatch * nonmatch) / 100 / nr) *
                                 currentProfile.multi()) - 2 * abs(int(s.size()) - int(userInput.size()));
                         currentProfile.changeBal(w);
                         std::cout << w << "\n";
