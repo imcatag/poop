@@ -4,6 +4,6 @@
 #include <vector>
 #include <string>
 
-extern std::array<std::string, 5584> wl;
+extern std::vector<std::string> wl;
 
 #endif //OOP_WORDLIST_H
