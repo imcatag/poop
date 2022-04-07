@@ -1,4 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
+//#define _CRT_SECURE_NO_WARNINGS
 //fix strtok in MSVC
 #include <iostream>
 #include <cstring>
@@ -6,71 +6,83 @@
 #include <vector>
 #include <deque>
 #include <fstream>
-#include <cstdlib>
 #include <cmath>
+#include <filesystem>
 #include "ext/random.hpp"
 #include "boost.h"
 #include "autoFarmer.h"
 #include "playerProfile.h"
 #include "wordlist.h"
+#include "ext/rlutil/rlutil.h"
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 #define toclear "cls"
-#define cp "copy"
+
 #else
 #define toclear "clear"
 #define cp "cp"
 #endif
 
 using Random = effolkronium::random_static;
-
+namespace fs = std::filesystem;
 
 
 void mainMenu()
 {
     std::cout << "\np to play\ns for shop\nc to create a copy of current profile\nq to save and quit\n";
-    return;
 }
 
-std::vector<boost> b;
-std::vector<playerProfile>  l;
-std::vector<autoFarmer> farm;
-playerProfile currentProfile;
-std::string userInput;
-bool logged = false;
-int letterVal[] = {1, 3, 3, 2, 1, 4,
-                   2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10,
-                   1, 1, 1, 1, 4, 4, 8, 4, 10}; // from scrabble, idk if accurate
 
-void initboostfarmer()
-{
-    boost   b1{"2x1k", 2000, 2, 600},
+std::vector<boost> initboost() {
+    std::vector<boost> b;
+    boost b1{"2x1k", 2000, 2, 600},
             b2{"3x1k", 1000, 3, 800},
             b3{"4x500", 500, 4, 1000};
     b.push_back(b1);
     b.push_back(b2);
     b.push_back(b3);
-
+    return b;
+}
+std::vector<autoFarmer> initfarmer(){
+    std::vector<autoFarmer> f;
     autoFarmer  f1{"2@300s", 300, 2},
             f2{"5@600s", 600, 5},
             f3{"12@1200s", 1200, 12};
-    farm.push_back(f1);
-    farm.push_back(f2);
-    farm.push_back(f3);
+    f.push_back(f1);
+    f.push_back(f2);
+    f.push_back(f3);
+    return f;
 }
 
 int main()
 {
-    initboostfarmer();
-
+    std::vector<boost> b = initboost();
+    std::vector<playerProfile>  l;
+    std::vector<autoFarmer> farm = initfarmer();
+    playerProfile currentProfile;
+    std::string userInput;
+    bool logged = false;
+    int letterVal[] = {1, 3, 3, 2, 1, 4,
+                       2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10,
+                       1, 1, 1, 1, 4, 4, 8, 4, 10}; // from scrabble, idk if accurate
     int failcount = 0;
-
+    fs::create_directories("userdata");
     while(true)
     {
         if(!logged) // login, but there is no logout feature yet
         {
             std::cout << "Choose a profile or type \'new\' to create a new profile\n";
-            std::ifstream f("players.txt");
+            std::ifstream testforfile("userdata/players.txt");
+            if(!testforfile.good())
+            {
+                std::cout << "no file\n";
+                testforfile.close();
+                std::ofstream g("userdata/players.txt");
+                g << "";
+                g.close();
+            }
+            testforfile.close();
+            std::ifstream f("userdata/players.txt");
 
             std::string playerName;
             long long int bal;
@@ -93,8 +105,8 @@ int main()
                 char * pch;
 
 
-                pch = std::strtok(line, " "); // farmers
-                while(pch != NULL)
+                pch = std::strpbrk(line, " "); // farmers
+                while(pch != nullptr)
                 {
                     for(auto i : farm)
                     {
@@ -110,21 +122,21 @@ int main()
                             farmers.push_back(i);
                         }
                     }
-                    pch = std::strtok(NULL, " ");
+                    pch = std::strpbrk(pch+1, " ");
                 }
                 f.getline(line,sizeof(line));
-                pch = std::strtok(line, " "); // count
-                while(pch != NULL)
+                pch = std::strpbrk(line, " "); // count
+                while(pch != nullptr)
                 {
                     count.push_back(atoi(pch));
-                    pch = std::strtok(NULL, " ");
+                    pch = std::strpbrk(pch + 1, " ");
                 }
                 f.getline(line,sizeof(line));
-                pch = std::strtok(line, " "); // boosts
-                while(pch != NULL)
+                pch = std::strpbrk(line, " "); // boosts
+                while(pch != nullptr)
                 {
                     boostname = pch;
-                    pch = std::strtok(NULL, " ");
+                    pch = std::strpbrk(pch+1, " ");
                     boostuses = atoi(pch);
 
                     for(auto i : b)
@@ -143,7 +155,7 @@ int main()
                         }
                     }
 
-                    pch = std::strtok(NULL, " ");
+                    pch = std::strpbrk(pch + 1, " ");
                 }
                 playerProfile aup {playerName, bal, farmers, count, boosts};
                 l.push_back(aup);
@@ -209,23 +221,29 @@ int main()
         }
         while(true)
         {
-            system(toclear);
+            rlutil::cls();
             std::cout << "Yo. Choose an option. Playing on profile "<< currentProfile.getName() << "\n";
             mainMenu();
             std::cin >> userInput;
             if(userInput[0] == 'q' || userInput[0] == 'Q')
             {
-                char cop[1001] = cp;
-                strcat(cop, " players.txt players_obsolete.txt");
-                system(cop);
-                // std::cout << cop;
+//                char cop[1001] = cp;
+//                strcat(cop, " players.txt players_obsolete.txt");1
+//                system(cop);
+//                std::cout << cop;
+                std::ifstream f("userdata/players.txt");
+                if (f.good()){
+                    fs::remove("userdata/players_obsolete.txt");
+                    fs::copy("userdata/players.txt", "userdata/players_obsolete.txt");
+                }
+                f.close();
                 for(size_t i = 0; i < l.size(); i ++)
                 {
                     if(l[i].getName() == currentProfile.getName())
                         l.erase(l.begin() + i);
                 }
                 l.push_back(currentProfile);
-                std::ofstream g("players.txt");
+                std::ofstream g("userdata/players.txt");
                 for (auto i : l)
                 {
                     g << i.getName() << "\n";
@@ -260,41 +278,17 @@ int main()
                 //std::cout << "This is totally implemented.\n";
                 std::cout << "q to quit\n";
                 //sleep but better lmao
-                for (int i = 1; i <= 100000000; i ++)
-                {
-                    i++;
-                    i--;
-                }
+                rlutil::msleep(1000);
                 std::cout << "GET READY TO TYPE.\n";
-                for (int i = 1; i <= 100000000; i ++)
-                {
-                    i++;
-                    i--;
-                }
+                rlutil::msleep(1000);
                 std::cout << "3.\n";
-                for (int i = 1; i <= 100000000; i ++)
-                {
-                    i++;
-                    i--;
-                }
+                rlutil::msleep(1000);
                 std::cout << "2.\n";
-                for (int i = 1; i <= 100000000; i ++)
-                {
-                    i++;
-                    i--;
-                }
+                rlutil::msleep(1000);
                 std::cout << "1.\n";
-                for (int i = 1; i <= 40000000; i ++)
-                {
-                    i++;
-                    i--;
-                }
+                rlutil::msleep(400);
                 std::cout << "GO!\n";
-                for (int i = 1; i <= 40000000; i ++)
-                {
-                    i++;
-                    i--;
-                }
+                rlutil::msleep(400);
                 getline(std::cin, userInput);
                 while(true)
                 {
@@ -315,27 +309,29 @@ int main()
                     getline(std::cin, userInput);
                     if(userInput == "q" || userInput == "Q" || userInput.empty())
                         break;
-                    for (unsigned long long int i = 0; i < std::min(s.size(), userInput.size()); i++)
-                    {
-                        if (s[i] != userInput[i])
-                            nonmatch++;
-                    }
-                    for(char i : s)
-                    {
-                        if(i!=' ')
-                        {
-                            nr ++;
-                            totalvalue += letterVal[i - 'a'];
+
+                    if(abs(int(s.size()) - int(userInput.size())) < 3) {
+                        for (unsigned long long int i = 0; i < std::min(s.size(), userInput.size()); i++) {
+                            if (s[i] != userInput[i])
+                                nonmatch++;
                         }
+                        for (char i: s) {
+                            if (i != ' ') {
+                                nr++;
+                                totalvalue += letterVal[i - 'a'];
+                            }
+                        }
+                        w = int(std::max(0, numberowords * totalvalue * (100 - nonmatch * nonmatch) / 100 / nr) *
+                                currentProfile.multi()) - 2 * abs(int(s.size()) - int(userInput.size()));
+                        currentProfile.changeBal(w);
+                        std::cout << w << "\n";
                     }
-                    w = int(std::max(0, numberowords * totalvalue * (100 - nonmatch*nonmatch) / 100 / nr) * currentProfile.multi());
-                    currentProfile.changeBal(w);
-                    std::cout << w << "\n";
-                    for (int i = 1; i <= 200000000; i ++)
-                    {
-                        i++;
-                        i--;
+                    else {
+                        std::cout << "Input length too far from given string length\n";
+                        currentProfile.changeBal(0
+                        );
                     }
+                    rlutil::msleep(2000);
                 }
             }
             else if(userInput[0] == 's' || userInput[0] == 'S')
