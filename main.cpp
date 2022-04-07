@@ -14,15 +14,7 @@
 #include "playerProfile.h"
 #include "wordlist.h"
 #include "ext/rlutil/rlutil.h"
-
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-#define toclear "cls"
-
-#else
-#define toclear "clear"
-#define cp "cp"
-#endif
-
+#define arrsize 5584
 using Random = effolkronium::random_static;
 namespace fs = std::filesystem;
 
@@ -275,9 +267,7 @@ int main()
             }
             else if(userInput[0] == 'p' || userInput[0] == 'P') // play cycle
             {
-                //std::cout << "This is totally implemented.\n";
                 std::cout << "q to quit\n";
-                //sleep but better lmao
                 rlutil::msleep(1000);
                 std::cout << "GET READY TO TYPE.\n";
                 rlutil::msleep(1000);
@@ -290,9 +280,9 @@ int main()
                 std::cout << "GO!\n";
                 rlutil::msleep(400);
                 getline(std::cin, userInput);
+                rlutil::cls();
                 while(true)
                 {
-                    system(toclear);
                     std::string s = "";
                     int nr = 0;
                     int totalvalue = 0;
@@ -301,9 +291,9 @@ int main()
                     int w = 0;
                     for(int i = 1; i <= numberowords; i ++)
                     {
-                        int wordrand = Random::get(0,int(wl.size()-1));
+                        int wordrand = Random::get(0,int(arrsize-1));
                         if(i != 1) s+= " ";
-                        s += wl[wordrand];
+                        s = s + wl[wordrand];
                     }
                     std::cout << s << "\n";
                     getline(std::cin, userInput);
@@ -332,16 +322,17 @@ int main()
                         );
                     }
                     rlutil::msleep(2000);
+                    rlutil::cls();
                 }
             }
             else if(userInput[0] == 's' || userInput[0] == 'S')
             {
-                system(toclear);
+                rlutil::cls();
                 std::cout << "b for boosts\nf for autofarmers\n";
                 std::cin >> userInput;
                 if(userInput[0] == 'b' || userInput[0] == 'B')
                 {
-                    system(toclear);
+                    rlutil::cls();
                     for(auto i : b)
                     {
                         std::cout << i << "\n";
@@ -380,7 +371,7 @@ int main()
 
                 else if(userInput[0] == 'f' || userInput[0] == 'F')
                 {
-                    system(toclear);
+                    rlutil::cls();
                     for(auto i : farm)
                     {
                         std::cout << i << "\n";
