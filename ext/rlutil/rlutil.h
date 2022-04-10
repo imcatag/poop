@@ -1,3 +1,6 @@
+#ifdef _MSC_VER
+    #pragma warning( disable : 4267 )
+#endif
 #pragma once
 /**
  * File: rlutil.h
@@ -32,7 +35,6 @@
 
 #ifndef RLUTIL_INLINE
 	#ifdef _MSC_VER
-        #pragma warning( once : 4267 )
 		#define RLUTIL_INLINE __inline
 	#else
 		#define RLUTIL_INLINE static __inline__

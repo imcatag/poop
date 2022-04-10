@@ -1,4 +1,7 @@
 //#define _CRT_SECURE_NO_WARNINGS
+#ifdef _MSC_VER
+    #pragma warning( disable : 4267 )
+#endif
 //fix strtok in MSVC
 #include <iostream>
 #include <cstring>
