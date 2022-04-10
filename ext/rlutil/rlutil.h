@@ -32,6 +32,7 @@
 
 #ifndef RLUTIL_INLINE
 	#ifdef _MSC_VER
+        #pragma warning( once : 4267 )
 		#define RLUTIL_INLINE __inline
 	#else
 		#define RLUTIL_INLINE static __inline__
