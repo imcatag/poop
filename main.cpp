@@ -301,8 +301,9 @@ int main()
                         break;
 
                     if(abs(int(s.size()) - int(userInput.size())) < 3) {
+                        using namespace std;
                         int nr = 0;
-                        for (unsigned long long int i = 0; i < std::min(s.size(), userInput.size()); i++) {
+                        for (unsigned long long int i = 0; i < min(s.size(), userInput.size()); i++) {
                             if (s[i] != userInput[i])
                                 nonmatch++;
                         }
@@ -312,7 +313,7 @@ int main()
                                 totalvalue += letterVal[i - 'a'];
                             }
                         }
-                        int w = int(std::max(0, numberowords * totalvalue * (100 - nonmatch * nonmatch) / 100 / nr) *
+                        int w = int(max(0, numberowords * totalvalue * (100 - nonmatch * nonmatch) / 100 / nr) *
                                 currentProfile.multi()) - 2 * abs(int(s.size()) - int(userInput.size()));
                         currentProfile.changeBal(w);
                         std::cout << w << "\n";
