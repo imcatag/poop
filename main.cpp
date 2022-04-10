@@ -1,8 +1,8 @@
-//#define _CRT_SECURE_NO_WARNINGS
+//warning happens in rlutil, so I disable it
 #ifdef _MSC_VER
     #pragma warning( disable : 4267 )
 #endif
-//fix strtok in MSVC
+
 #include <iostream>
 #include <cstring>
 #include <string>
@@ -21,12 +21,10 @@
 using Random = effolkronium::random_static;
 namespace fs = std::filesystem;
 
-
 void mainMenu()
 {
     std::cout << "\np to play\ns for shop\nc to create a copy of current profile\nq to save and quit\n";
 }
-
 
 std::vector<boost> initboost() {
     std::vector<boost> b;
@@ -38,6 +36,7 @@ std::vector<boost> initboost() {
     b.push_back(b3);
     return b;
 }
+
 std::vector<autoFarmer> initfarmer(){
     std::vector<autoFarmer> f;
     autoFarmer  f1{"2@300s", 300, 2},
@@ -47,6 +46,134 @@ std::vector<autoFarmer> initfarmer(){
     f.push_back(f2);
     f.push_back(f3);
     return f;
+}
+
+void quitGame(std::vector<playerProfile>  l, playerProfile currentProfile) {
+    std::ifstream f("userdata/players.txt");
+    if (f.good()) {
+        fs::remove("userdata/players_obsolete.txt");
+        fs::copy("userdata/players.txt", "userdata/players_obsolete.txt");
+    }
+    f.close();
+    for (size_t i = 0; i < l.size(); i++) {
+        if (l[i].getName() == currentProfile.getName())
+            l.erase(l.begin() + i);
+    }
+    l.push_back(currentProfile);
+    std::ofstream g("userdata/players.txt");
+    for (auto i: l) {
+        g << i.getName() << "\n";
+        g << i.getBal() << "\n";
+        for (auto j: i.getFarmers()) {
+            g << j.getName() << " ";
+        }
+        g << "\n";
+        for (auto j: i.getCount()) {
+            g << j << " ";
+        }
+        g << "\n";
+        for (size_t j = 0; j < i.getBoosts().size(); j++) {
+            g << i.getBoosts()[j].getName() << " " << i.getBoosts()[j].getUses() << " ";
+        }
+        g << "\n";
+
+    }
+}
+
+std::vector<playerProfile> readPlayers(std::vector<autoFarmer> farm, std::vector<boost> b)
+{
+    std::vector<playerProfile>  l;
+    std::ifstream testforfile("userdata/players.txt");
+    if(!testforfile.good())
+    {
+        std::cout << "no file\n";
+        testforfile.close();
+        std::ofstream g("userdata/players.txt");
+        g << "";
+        g.close();
+    }
+    testforfile.close();
+    std::ifstream f("userdata/players.txt");
+
+    std::string playerName;
+    long long int bal;
+    char line[10001];
+
+    std::vector<autoFarmer> farmers;
+    std::vector<int> count;
+
+    std::deque<boost> boosts;
+    std::string boostname;
+    int boostuses;
+    while(f>>playerName) // read all playerdata file
+    {
+        farmers.clear();
+        count.clear();
+        boosts.clear();
+        f >> bal;
+        f.get();
+        f.getline(line,sizeof(line));
+        char * pch;
+
+
+        pch = std::strpbrk(line, " "); // farmers
+        while(pch != nullptr)
+        {
+            for(auto i : farm)
+            {
+                bool matching = true;
+                for(size_t j = 0; j < i.getName().size() ; j ++)
+                    if (i.getName()[j] != pch[j])
+                    {
+                        matching = false;
+                        break;
+                    }
+                if(matching)
+                {
+                    farmers.push_back(i);
+                }
+            }
+            pch = std::strpbrk(pch+1, " ");
+        }
+        f.getline(line,sizeof(line));
+        pch = std::strpbrk(line, " "); // count
+        while(pch != nullptr)
+        {
+            count.push_back(atoi(pch));
+            pch = std::strpbrk(pch + 1, " ");
+        }
+        f.getline(line,sizeof(line));
+        pch = std::strpbrk(line, " "); // boosts
+        while(pch != nullptr)
+        {
+            boostname = pch;
+            pch = std::strpbrk(pch+1, " ");
+            boostuses = atoi(pch);
+
+            for(auto i : b)
+            {
+                bool matching = true;
+                for(size_t j = 0; j < i.getName().size() ; j ++)
+                    if (i.getName()[j] != boostname[j])
+                    {
+                        matching = false;
+                        break;
+                    }
+                if(matching)
+                {
+                    boost aub{boostname, boostuses, i.getMultiplier(), i.getPrice()};
+                    boosts.push_back(aub);
+                }
+            }
+
+            pch = std::strpbrk(pch + 1, " ");
+        }
+        playerProfile aup {playerName, bal, farmers, count, boosts};
+        l.push_back(aup);
+        std::cout << aup << "\n";
+    }
+    f.close();
+    return l;
 }
 
 int main()
@@ -67,96 +194,8 @@ int main()
         if(!logged) // login, but there is no logout feature yet
         {
             std::cout << "Choose a profile or type \'new\' to create a new profile\n";
-            std::ifstream testforfile("userdata/players.txt");
-            if(!testforfile.good())
-            {
-                std::cout << "no file\n";
-                testforfile.close();
-                std::ofstream g("userdata/players.txt");
-                g << "";
-                g.close();
-            }
-            testforfile.close();
-            std::ifstream f("userdata/players.txt");
-
-            std::string playerName;
-            long long int bal;
-            char line[10001];
-
-            std::vector<autoFarmer> farmers;
-            std::vector<int> count;
-
-            std::deque<boost> boosts;
-            std::string boostname;
-            int boostuses;
-            while(f>>playerName) // read all playerdata file
-            {
-                farmers.clear();
-                count.clear();
-                boosts.clear();
-                f >> bal;
-                f.get();
-                f.getline(line,sizeof(line));
-                char * pch;
-
-
-                pch = std::strpbrk(line, " "); // farmers
-                while(pch != nullptr)
-                {
-                    for(auto i : farm)
-                    {
-                        bool matching = true;
-                        for(size_t j = 0; j < i.getName().size() ; j ++)
-                            if (i.getName()[j] != pch[j])
-                            {
-                                matching = false;
-                                break;
-                            }
-                        if(matching)
-                        {
-                            farmers.push_back(i);
-                        }
-                    }
-                    pch = std::strpbrk(pch+1, " ");
-                }
-                f.getline(line,sizeof(line));
-                pch = std::strpbrk(line, " "); // count
-                while(pch != nullptr)
-                {
-                    count.push_back(atoi(pch));
-                    pch = std::strpbrk(pch + 1, " ");
-                }
-                f.getline(line,sizeof(line));
-                pch = std::strpbrk(line, " "); // boosts
-                while(pch != nullptr)
-                {
-                    boostname = pch;
-                    pch = std::strpbrk(pch+1, " ");
-                    boostuses = atoi(pch);
-
-                    for(auto i : b)
-                    {
-                        bool matching = true;
-                        for(size_t j = 0; j < i.getName().size() ; j ++)
-                            if (i.getName()[j] != boostname[j])
-                            {
-                                matching = false;
-                                break;
-                            }
-                        if(matching)
-                        {
-                            boost aub{boostname, boostuses, i.getMultiplier(), i.getPrice()};
-                            boosts.push_back(aub);
-                        }
-                    }
-
-                    pch = std::strpbrk(pch + 1, " ");
-                }
-                playerProfile aup {playerName, bal, farmers, count, boosts};
-                l.push_back(aup);
-                std::cout << aup << "\n";
-            }
-            f.close();
+            l = readPlayers(farm, b);
+            
             while(true) // profile selection loop
             {
                 if(logged) break;
@@ -222,44 +261,7 @@ int main()
             std::cin >> userInput;
             if(userInput[0] == 'q' || userInput[0] == 'Q')
             {
-//                char cop[1001] = cp;
-//                strcat(cop, " players.txt players_obsolete.txt");1
-//                system(cop);
-//                std::cout << cop;
-                std::ifstream f("userdata/players.txt");
-                if (f.good()){
-                    fs::remove("userdata/players_obsolete.txt");
-                    fs::copy("userdata/players.txt", "userdata/players_obsolete.txt");
-                }
-                f.close();
-                for(size_t i = 0; i < l.size(); i ++)
-                {
-                    if(l[i].getName() == currentProfile.getName())
-                        l.erase(l.begin() + i);
-                }
-                l.push_back(currentProfile);
-                std::ofstream g("userdata/players.txt");
-                for (auto i : l)
-                {
-                    g << i.getName() << "\n";
-                    g << i.getBal() << "\n";
-                    for(auto j : i.getFarmers())
-                    {
-                        g << j.getName() << " ";
-                    }
-                    g << "\n";
-                    for(auto j : i.getCount())
-                    {
-                        g << j << " ";
-                    }
-                    g << "\n";
-                    for(size_t j = 0; j < i.getBoosts().size(); j ++)
-                    {
-                        g << i.getBoosts()[j].getName() << " " << i.getBoosts()[j].getUses() << " ";
-                    }
-                    g << "\n";
-
-                }
+                quitGame(l, currentProfile);
                 return 0;
             }
             else if(userInput[0] == 'c' || userInput[0] == 'C')
@@ -271,13 +273,13 @@ int main()
             else if(userInput[0] == 'p' || userInput[0] == 'P') // play cycle
             {
                 std::cout << "q to quit\n";
-                rlutil::msleep(1000);
+                rlutil::msleep(600);
                 std::cout << "GET READY TO TYPE.\n";
-                rlutil::msleep(1000);
+                rlutil::msleep(600);
                 std::cout << "3.\n";
-                rlutil::msleep(1000);
+                rlutil::msleep(600);
                 std::cout << "2.\n";
-                rlutil::msleep(1000);
+                rlutil::msleep(600);
                 std::cout << "1.\n";
                 rlutil::msleep(400);
                 std::cout << "GO!\n";
@@ -326,7 +328,7 @@ int main()
                         currentProfile.changeBal(0
                         );
                     }
-                    rlutil::msleep(2000);
+                    rlutil::msleep(1200);
                     rlutil::cls();
                 }
             }
@@ -361,7 +363,7 @@ int main()
                                 else
                                 {
                                     std::cout << "NO MONEY!\n";
-                                    system("pause");
+                                    rlutil::msleep(1000);
                                 }
                                 found = true;
                             }
@@ -369,7 +371,7 @@ int main()
                         if(!found)
                         {
                             std::cout << "Can't find that boost!\n";
-                            system("pause");
+                            rlutil::msleep(1000);
                         }
                     }
                 }
@@ -382,7 +384,7 @@ int main()
                         std::cout << i << "\n";
                     }
                     std::cout << "This is totally implemented.\n";
-                    system("pause");
+                    rlutil::msleep(1000);
                 }
             }
             else return 0;
