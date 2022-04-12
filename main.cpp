@@ -105,13 +105,14 @@ std::vector<playerProfile> readPlayers(std::vector<autoFarmer> farm, std::vector
     std::deque<boost> boosts;
     std::string boostname;
     int boostuses;
-    while(f>>playerName) // read all playerdata file
+    while(getline(f, playerName)) // read all playerdata file
     {
         farmers.clear();
         count.clear();
         boosts.clear();
         f >> bal;
         f.get();
+        std::memset(line, 0, 10001);
         f.getline(line,sizeof(line));
         char * pch;
 
@@ -176,6 +177,135 @@ std::vector<playerProfile> readPlayers(std::vector<autoFarmer> farm, std::vector
     return l;
 }
 
+void getReady()
+{
+    std::string temp1;
+    std::cout << "q to quit\n";
+    rlutil::msleep(600);
+    std::cout << "GET READY TO TYPE.\n";
+    rlutil::msleep(600);
+    std::cout << "3.\n";
+    rlutil::msleep(600);
+    std::cout << "2.\n";
+    rlutil::msleep(600);
+    std::cout << "1.\n";
+    rlutil::msleep(400);
+    std::cout << "GO!\n";
+    rlutil::msleep(400);
+    getline(std::cin, temp1);
+    rlutil::cls();
+}
+
+void playCycle(playerProfile& currentProfile)
+{
+    const int letterVal[] = {1, 3, 3, 2, 1, 4,
+                             2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10,
+                             1, 1, 1, 1, 4, 4, 8, 4, 10}; // from scrabble, idk if accurate
+    while(true)
+    {
+        std::string s = "", userInput = "";
+
+        int totalvalue = 0;
+        int numberowords = Random::get(10,12);
+        int nonmatch = 0;
+
+        for(int i = 1; i <= numberowords; i ++)
+        {
+            int wordrand = Random::get(0,int(arrsize-1));
+            if(i != 1) s+= " ";
+            s = s + wl[wordrand];
+        }
+        std::cout << s << "\n";
+        getline(std::cin, userInput);
+        if(userInput == "q" || userInput == "Q" || userInput.empty())
+            break;
+
+        if(abs(int(s.size()) - int(userInput.size())) < 3) {
+            using namespace std;
+            int nr = 0;
+            for (unsigned long long int i = 0; i < min(s.size(), userInput.size()); i++) {
+                if (s[i] != userInput[i])
+                    nonmatch++;
+            }
+            for (char i: s) {
+                if (i != ' ') {
+                    nr++;
+                    totalvalue += letterVal[i - 'a'];
+                }
+            }
+            int w = int(max(0, numberowords * totalvalue * (100 - nonmatch * nonmatch) / 100 / nr) *
+                        currentProfile.multi()) - 2 * abs(int(s.size()) - int(userInput.size()));
+            currentProfile.changeBal(w);
+            std::cout << w << "\n";
+        }
+        else {
+            std::cout << "Input length too far from given string length\n";
+            currentProfile.changeBal(0
+            );
+        }
+        rlutil::msleep(1200);
+        rlutil::cls();
+    }
+}
+
+void buyCycle(playerProfile& currentProfile, std::vector<boost> b, std::vector<autoFarmer> farm)
+{
+    std::string userInput = "";
+
+    rlutil::cls();
+    std::cout << "b for boosts\nf for autofarmers\n";
+    std::cin >> userInput;
+    if(userInput[0] == 'b' || userInput[0] == 'B')
+    {
+        rlutil::cls();
+        for(auto i : b)
+        {
+            std::cout << i << "\n";
+        }
+        std::cout << "name the boost you want to buy or quit with 'q'\n";
+        std::cin >> userInput;
+        if(userInput[0] == 'q' || userInput[0] == 'Q')
+            return;
+        else
+        {
+            bool found = false;
+            for(auto i : b)
+            {
+                if(i.getName() == userInput)
+                {
+                    if(currentProfile.getBal() > i.getPrice())
+                    {
+                        currentProfile.changeBal(-i.getPrice());
+                        currentProfile.addBoost(i);
+                    }
+                    else
+                    {
+                        std::cout << "NO MONEY!\n";
+                        rlutil::msleep(1000);
+                    }
+                    found = true;
+                }
+            }
+            if(!found)
+            {
+                std::cout << "Can't find that boost!\n";
+                rlutil::msleep(1000);
+            }
+        }
+    }
+
+    else if(userInput[0] == 'f' || userInput[0] == 'F')
+    {
+        rlutil::cls();
+        for(auto i : farm)
+        {
+            std::cout << i << "\n";
+        }
+        std::cout << "This is totally implemented. Returning you to the menu.\n";
+        rlutil::msleep(2500);
+    }
+}
+
 int main()
 {
     std::vector<boost> b = initboost();
@@ -184,9 +314,6 @@ int main()
     playerProfile currentProfile;
     std::string userInput;
     bool logged = false;
-    const int letterVal[] = {1, 3, 3, 2, 1, 4,
-                       2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10,
-                       1, 1, 1, 1, 4, 4, 8, 4, 10}; // from scrabble, idk if accurate
     int failcount = 0;
     fs::create_directories("userdata");
     while(true)
@@ -195,7 +322,7 @@ int main()
         {
             std::cout << "Choose a profile or type \'new\' to create a new profile\n";
             l = readPlayers(farm, b);
-            
+
             while(true) // profile selection loop
             {
                 if(logged) break;
@@ -253,7 +380,7 @@ int main()
             }
 
         }
-        while(true)
+        while(true) // most user interaction happens here
         {
             rlutil::cls();
             std::cout << "Yo. Choose an option. Playing on profile "<< currentProfile.getName() << "\n";
@@ -272,122 +399,14 @@ int main()
             }
             else if(userInput[0] == 'p' || userInput[0] == 'P') // play cycle
             {
-                std::cout << "q to quit\n";
-                rlutil::msleep(600);
-                std::cout << "GET READY TO TYPE.\n";
-                rlutil::msleep(600);
-                std::cout << "3.\n";
-                rlutil::msleep(600);
-                std::cout << "2.\n";
-                rlutil::msleep(600);
-                std::cout << "1.\n";
-                rlutil::msleep(400);
-                std::cout << "GO!\n";
-                rlutil::msleep(400);
-                getline(std::cin, userInput);
-                rlutil::cls();
-                while(true)
-                {
-                    std::string s = "";
-
-                    int totalvalue = 0;
-                    int numberowords = Random::get(10,12);
-                    int nonmatch = 0;
-
-                    for(int i = 1; i <= numberowords; i ++)
-                    {
-                        int wordrand = Random::get(0,int(arrsize-1));
-                        if(i != 1) s+= " ";
-                        s = s + wl[wordrand];
-                    }
-                    std::cout << s << "\n";
-                    getline(std::cin, userInput);
-                    if(userInput == "q" || userInput == "Q" || userInput.empty())
-                        break;
-
-                    if(abs(int(s.size()) - int(userInput.size())) < 3) {
-                        using namespace std;
-                        int nr = 0;
-                        for (unsigned long long int i = 0; i < min(s.size(), userInput.size()); i++) {
-                            if (s[i] != userInput[i])
-                                nonmatch++;
-                        }
-                        for (char i: s) {
-                            if (i != ' ') {
-                                nr++;
-                                totalvalue += letterVal[i - 'a'];
-                            }
-                        }
-                        int w = int(max(0, numberowords * totalvalue * (100 - nonmatch * nonmatch) / 100 / nr) *
-                                currentProfile.multi()) - 2 * abs(int(s.size()) - int(userInput.size()));
-                        currentProfile.changeBal(w);
-                        std::cout << w << "\n";
-                    }
-                    else {
-                        std::cout << "Input length too far from given string length\n";
-                        currentProfile.changeBal(0
-                        );
-                    }
-                    rlutil::msleep(1200);
-                    rlutil::cls();
-                }
+                getReady();
+                playCycle(currentProfile);
             }
             else if(userInput[0] == 's' || userInput[0] == 'S')
             {
-                rlutil::cls();
-                std::cout << "b for boosts\nf for autofarmers\n";
-                std::cin >> userInput;
-                if(userInput[0] == 'b' || userInput[0] == 'B')
-                {
-                    rlutil::cls();
-                    for(auto i : b)
-                    {
-                        std::cout << i << "\n";
-                    }
-                    std::cout << "name the boost you want to buy or quit with 'q'\n";
-                    std::cin >> userInput;
-                    if(userInput[0] == 'q' || userInput[0] == 'Q')
-                        continue;
-                    else
-                    {
-                        bool found = false;
-                        for(auto i : b)
-                        {
-                            if(i.getName() == userInput)
-                            {
-                                if(currentProfile.getBal() > i.getPrice())
-                                {
-                                    currentProfile.changeBal(-i.getPrice());
-                                    currentProfile.addBoost(i);
-                                }
-                                else
-                                {
-                                    std::cout << "NO MONEY!\n";
-                                    rlutil::msleep(1000);
-                                }
-                                found = true;
-                            }
-                        }
-                        if(!found)
-                        {
-                            std::cout << "Can't find that boost!\n";
-                            rlutil::msleep(1000);
-                        }
-                    }
-                }
-
-                else if(userInput[0] == 'f' || userInput[0] == 'F')
-                {
-                    rlutil::cls();
-                    for(auto i : farm)
-                    {
-                        std::cout << i << "\n";
-                    }
-                    std::cout << "This is totally implemented.\n";
-                    rlutil::msleep(1000);
-                }
+                buyCycle(currentProfile, b, farm);
             }
-            else return 0;
+            else {std::cout << "No clue what you're trying to do."; return 0;}
         }
 
         break;
