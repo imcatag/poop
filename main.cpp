@@ -347,7 +347,7 @@ int main()
                             playerProfile aup{userInput};
                             currentProfile = aup;
                             l.push_back(currentProfile);
-                            //logged = true;
+                            logged = true;
                             break;
                         }
                     }
@@ -388,6 +388,7 @@ int main()
             std::cin >> userInput;
             if(userInput[0] == 'q' || userInput[0] == 'Q')
             {
+                if(!logged) rlutil::msleep(2); // just to pass cppcheck on clang 11
                 quitGame(l, currentProfile);
                 return 0;
             }
