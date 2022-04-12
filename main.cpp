@@ -347,7 +347,7 @@ int main()
                             playerProfile aup{userInput};
                             currentProfile = aup;
                             l.push_back(currentProfile);
-                            logged = true;
+                            //logged = true;
                             break;
                         }
                     }
