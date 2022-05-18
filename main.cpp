@@ -16,30 +16,12 @@
 #include "autoFarmer.h"
 #include "playerProfile.h"
 #include "wordlist.h"
+#include "errors.h"
 #include "ext/rlutil/rlutil.h"
 #define arrsize 5584
 using Random = effolkronium::random_static;
 namespace fs = std::filesystem;
 
-class app_error : public std::runtime_error {
-public:
-    explicit app_error(const std::string &arg) : runtime_error(arg) {}
-};
-
-class typing_error : public app_error {
-public:
-    explicit typing_error(const std::string &arg) : app_error(arg) {}
-};
-
-class shop_error : public app_error {
-public:
-    explicit shop_error(const std::string &arg) : app_error(arg) {}
-};
-
-class naming_error : public app_error {
-public:
-    explicit naming_error(const std::string &arg) : app_error(arg) {}
-};
 
 //
 //class demoProfile : public playerProfile{
@@ -73,7 +55,7 @@ public:
         std::cout << "\nThis is a hardcore account. You are not able to buy boosts and farmers.";
     }
 
-    char profileType() override
+    [[maybe_unused]] char profileType() override
     {
         return 'h';
     };
