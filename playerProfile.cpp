@@ -94,3 +94,7 @@ playerProfile::playerProfile(const playerProfile &other) : name{other.name}, bal
 playerProfile::~playerProfile() {
 
 }
+
+char playerProfile::profileType() {
+    return 'c';
+}

@@ -1,5 +1,5 @@
 //
-// Created by catag on 4/6/2022.
+// Word list from http://norvig.com/ngrams/
 //
 
 #include <array>

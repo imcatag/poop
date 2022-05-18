@@ -21,20 +21,81 @@
 using Random = effolkronium::random_static;
 namespace fs = std::filesystem;
 
+class app_error : public std::runtime_error {
+public:
+    explicit app_error(const std::string &arg) : runtime_error(arg) {}
+};
+
+class typing_error : public app_error {
+public:
+    explicit typing_error(const std::string &arg) : app_error(arg) {}
+};
+
+class shop_error : public app_error {
+public:
+    explicit shop_error(const std::string &arg) : app_error(arg) {}
+};
+
+class naming_error : public app_error {
+public:
+    explicit naming_error(const std::string &arg) : app_error(arg) {}
+};
+
+//
+//class demoProfile : public playerProfile{
+//    enum profileTypes {basic, hardcore, demo};
+//    profileTypes profileType = demo;
+//public:
+//
+//};
+
+class [[maybe_unused]] hardcoreProfile : public playerProfile
+{
+public:
+    [[maybe_unused]] explicit hardcoreProfile(const std::string &name_) : playerProfile(name_)
+    {
+        //std::cout << "Created profile " << name << "\n";
+    };
+
+    [[maybe_unused]] hardcoreProfile(const std::string &name_, const long long int bal_)
+    {
+        this->name = name_;
+        this->balance = bal_;
+        //std::cout << "Created profile " << name << "\n";
+    };
+    void addBoost ([[maybe_unused]] const boost& b) override
+    {
+        std::cout << "\nUnable to buy boosts on hardcore account!\n";
+    }
+
+    [[maybe_unused]] static void whatIsHardcore()
+    {
+        std::cout << "\nThis is a hardcore account. You are not able to buy boosts and farmers.";
+    }
+
+    char profileType() override
+    {
+        return 'h';
+    };
+
+    ~hardcoreProfile() override {};
+
+};
+
 void mainMenu()
 {
     std::cout << "\np to play\ns for shop\nc to create a copy of current profile\nq to save and quit\n";
 }
 
 std::vector<boost> initboost() {
-    std::vector<boost> b;
+    std::vector<boost> boostVector;
     boost b1{"2x1k", 2000, 2, 600},
             b2{"3x1k", 1000, 3, 800},
             b3{"4x500", 500, 4, 1000};
-    b.push_back(b1);
-    b.push_back(b2);
-    b.push_back(b3);
-    return b;
+    boostVector.push_back(b1);
+    boostVector.push_back(b2);
+    boostVector.push_back(b3);
+    return boostVector;
 }
 
 std::vector<autoFarmer> initfarmer(){
@@ -80,7 +141,30 @@ void quitGame(std::vector<playerProfile>  l, playerProfile currentProfile) {
     }
 }
 
-std::vector<playerProfile> readPlayers(std::vector<autoFarmer> farm, std::vector<boost> b)
+//std::vector<hardcoreProfile> readHardcorePlayers()
+//{
+//    std::vector<hardcoreProfile> l;
+//    std::ifstream testforfile("userdata/hardcoreplayers.txt");
+//    if(!testforfile.good())
+//    {
+//        std::cout << "no file\n";
+//        testforfile.close();
+//        std::ofstream g("userdata/players.txt");
+//        g << "";
+//        g.close();
+//    }
+//    testforfile.close();
+//    std::ifstream f("userdata/hardcoreplayers.txt");
+//    std::string playerName;
+//    long long int bal;
+//    while(getline(f, playerName))
+//    {
+//        f >> bal;
+//
+//    }
+//}
+
+std::vector<playerProfile> readBasicPlayers(std::vector<autoFarmer> farm, std::vector<boost> b)
 {
     std::vector<playerProfile>  l;
     std::ifstream testforfile("userdata/players.txt");
@@ -203,52 +287,57 @@ void playCycle(playerProfile& currentProfile)
                              1, 1, 1, 1, 4, 4, 8, 4, 10}; // from scrabble, idk if accurate
     while(true)
     {
-        std::string s = "", userInput = "";
+        try {
+            std::string s = "", userInput = "";
 
-        int totalvalue = 0;
-        int numberowords = Random::get(10,12);
-        int nonmatch = 0;
+            int totalvalue = 0;
+            int numberowords = Random::get(10, 12);
+            int nonmatch = 0;
 
-        for(int i = 1; i <= numberowords; i ++)
-        {
-            int wordrand = Random::get(0,int(arrsize-1));
-            if(i != 1) s+= " ";
-            s = s + wl[wordrand];
-        }
-        std::cout << s << "\n";
-        getline(std::cin, userInput);
-        if(userInput == "q" || userInput == "Q" || userInput.empty())
-            break;
-
-        if(abs(int(s.size()) - int(userInput.size())) < 3) {
-            using namespace std;
-            int nr = 0;
-            for (unsigned long long int i = 0; i < min(s.size(), userInput.size()); i++) {
-                if (s[i] != userInput[i])
-                    nonmatch++;
+            for (int i = 1; i <= numberowords; i++) {
+                int wordrand = Random::get(0, int(arrsize - 1));
+                if (i != 1) s += " ";
+                s = s + wl[wordrand];
             }
-            for (char i: s) {
-                if (i != ' ') {
-                    nr++;
-                    totalvalue += letterVal[i - 'a'];
+            std::cout << s << "\n";
+            getline(std::cin, userInput);
+            if (userInput == "q" || userInput == "Q" || userInput.empty())
+                break;
+
+            if (abs(int(s.size()) - int(userInput.size())) > 3) {
+                currentProfile.changeBal(0);
+                throw typing_error{"\nInvalid input length! Booster use consumed if you had a booster on.\n"};
+            } else {
+                using namespace std;
+                int nr = 0;
+                for (unsigned long long int i = 0; i < min(s.size(), userInput.size()); i++) {
+                    if (s[i] != userInput[i])
+                        nonmatch++;
                 }
+                for (char i: s) {
+                    if (i != ' ') {
+                        nr++;
+                        totalvalue += letterVal[i - 'a'];
+                    }
+                }
+                int w = int(max(0, numberowords * totalvalue * (100 - nonmatch * nonmatch) / 100 / nr) *
+                            currentProfile.multi()) - 2 * abs(int(s.size()) - int(userInput.size()));
+                currentProfile.changeBal(w);
+                std::cout << w << "\n";
             }
-            int w = int(max(0, numberowords * totalvalue * (100 - nonmatch * nonmatch) / 100 / nr) *
-                        currentProfile.multi()) - 2 * abs(int(s.size()) - int(userInput.size()));
-            currentProfile.changeBal(w);
-            std::cout << w << "\n";
+            rlutil::msleep(1200);
+            rlutil::cls();
         }
-        else {
-            std::cout << "Input length too far from given string length\n";
-            currentProfile.changeBal(0
-            );
+        catch(typing_error& err)
+        {
+            std::cout << err.what();
+            rlutil::msleep(1200);
+            rlutil::cls();
         }
-        rlutil::msleep(1200);
-        rlutil::cls();
     }
 }
 
-void buyCycle(playerProfile& currentProfile, std::vector<boost> b, std::vector<autoFarmer> farm)
+void buyCycle(playerProfile& currentProfile, const std::vector<boost>& b, const std::vector<autoFarmer>& farm)
 {
     std::string userInput = "";
 
@@ -280,16 +369,15 @@ void buyCycle(playerProfile& currentProfile, std::vector<boost> b, std::vector<a
                     }
                     else
                     {
-                        std::cout << "NO MONEY!\n";
-                        rlutil::msleep(1000);
+                        throw shop_error {"Not enough balance!"};
+
                     }
                     found = true;
                 }
             }
             if(!found)
             {
-                std::cout << "Can't find that boost!\n";
-                rlutil::msleep(1000);
+                throw shop_error{"Couldn't find that!"};
             }
         }
     }
@@ -309,7 +397,8 @@ void buyCycle(playerProfile& currentProfile, std::vector<boost> b, std::vector<a
 int main()
 {
     std::vector<boost> b = initboost();
-    std::vector<playerProfile>  l;
+    std::vector<playerProfile>  basicPlayers;
+//    std::vector<hardcoreProfile>  hardcorePlayers;
     std::vector<autoFarmer> farm = initfarmer();
     playerProfile currentProfile;
     std::string userInput;
@@ -321,41 +410,51 @@ int main()
         if(!logged) // login, but there is no logout feature yet
         {
             std::cout << "Choose a profile or type \'new\' to create a new profile\n";
-            l = readPlayers(farm, b);
-
+            basicPlayers = readBasicPlayers(farm, b);
+//            hardcorePlayers = readHardcorePlayers();
             while(true) // profile selection loop
             {
                 if(logged) break;
                 std::cin >> userInput;
                 if(userInput == "q" || userInput == "Q") return 0;
-                else if(userInput == "new")
-                    while(true)
-                    {
-                        std::cout << "Name your profile: ";
-                        std::cin >> userInput;
-                        bool nameused = false;
-                        for (auto i: l)
-                        {
-                            if (i.getName() == userInput)
-                            {
-                                nameused = true;
-                                break;
+                else if(userInput == "new") {
+                    int tries = 0;
+                    while (true) {
+                        tries ++;
+                        try {
+                            std::cout << "Name your profile: ";
+                            std::cin >> userInput;
+                            //bool nameused = false;
+                            for (auto i: basicPlayers) {
+                                if (i.getName() == userInput) {
+                                    throw naming_error{"This name is already on the list. Give me antoher one.\n"};
+//                                nameused = true;
+                                    break;
+                                }
                             }
-                        }
-                        if (!nameused)
-                        {
+//                        if (nameused) throw naming_error{"This name is already on the list. Give me antoher one."};
+//                        if (!nameused)
+//                        {
                             playerProfile aup{userInput};
                             currentProfile = aup;
-                            l.push_back(currentProfile);
+                            basicPlayers.push_back(currentProfile);
                             logged = true;
                             break;
+//                        }
+                        }
+                        catch (app_error &err) {
+                            if (tries > 5) {std::cout << "You're obviously not here to create a new profile so I'm going. Bye!"; return 0;}
+
+                            std::cout << err.what();
+
                         }
                     }
+                }
                 else
                 {
 
                     bool matching = false;
-                    for(auto i : l)
+                    for(auto i : basicPlayers)
                     {
                         if(userInput == i.getName())
                         {
@@ -389,14 +488,14 @@ int main()
             if(userInput[0] == 'q' || userInput[0] == 'Q')
             {
                 if(!logged) rlutil::msleep(2); // just to pass cppcheck on clang 11
-                quitGame(l, currentProfile);
+                quitGame(basicPlayers, currentProfile);
                 return 0;
             }
             else if(userInput[0] == 'c' || userInput[0] == 'C')
             {
                 playerProfile aup = currentProfile;
                 aup.setName("copy of " + currentProfile.getName());
-                l.push_back(aup);
+                basicPlayers.push_back(aup);
             }
             else if(userInput[0] == 'p' || userInput[0] == 'P') // play cycle
             {
@@ -405,7 +504,14 @@ int main()
             }
             else if(userInput[0] == 's' || userInput[0] == 'S')
             {
-                buyCycle(currentProfile, b, farm);
+                try{
+                    buyCycle(currentProfile, b, farm);
+                }
+                catch(shop_error& err)
+                {
+                    std::cout << "\n" << err.what() << "\n";
+                    rlutil::msleep(1000);
+                }
             }
             else {std::cout << "No clue what you're trying to do."; return 0;}
         }

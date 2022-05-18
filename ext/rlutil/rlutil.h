@@ -1,6 +1,3 @@
-#ifdef _MSC_VER
-    #pragma warning( disable : 4267 )
-#endif
 #pragma once
 /**
  * File: rlutil.h
