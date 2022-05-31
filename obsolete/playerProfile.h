@@ -4,8 +4,8 @@
 
 #include <vector>
 #include <deque>
-#include "autoFarmer.h"
-#include "boost.h"
+#include "../autoFarmer.h"
+#include "../boost.h"
 
 class playerProfile
 {

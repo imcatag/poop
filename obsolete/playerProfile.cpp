@@ -3,6 +3,7 @@
 //
 
 #include "playerProfile.h"
+#include <ostream>
 
 void playerProfile::changeBal(long long int x) {
     balance += x;

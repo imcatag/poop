@@ -11,58 +11,28 @@
 #include <fstream>
 #include <cmath>
 #include <filesystem>
+#include <cstdlib>
 #include "ext/random.hpp"
 #include "boost.h"
 #include "autoFarmer.h"
-#include "playerProfile.h"
+#include "normalProfile.h"
 #include "wordlist.h"
 #include "errors.h"
 #include "ext/rlutil/rlutil.h"
-#define arrsize 5584
+#include "profileMinimal.h"
+
+const int arrsize = 5584;
 using Random = effolkronium::random_static;
 namespace fs = std::filesystem;
 
 
 //
-//class demoProfile : public playerProfile{
+//class demoProfile : public normalProfile{
 //    enum profileTypes {basic, hardcore, demo};
 //    profileTypes profileType = demo;
 //public:
 //
 //};
-
-class [[maybe_unused]] hardcoreProfile : public playerProfile
-{
-public:
-    [[maybe_unused]] explicit hardcoreProfile(const std::string &name_) : playerProfile(name_)
-    {
-        //std::cout << "Created profile " << name << "\n";
-    };
-
-    [[maybe_unused]] hardcoreProfile(const std::string &name_, const long long int bal_)
-    {
-        this->name = name_;
-        this->balance = bal_;
-        //std::cout << "Created profile " << name << "\n";
-    };
-    void addBoost ([[maybe_unused]] const boost& b) override
-    {
-        std::cout << "\nUnable to buy boosts on hardcore account!\n";
-    }
-
-    [[maybe_unused]] static void whatIsHardcore()
-    {
-        std::cout << "\nThis is a hardcore account. You are not able to buy boosts and farmers.";
-    }
-
-    [[maybe_unused]] char profileType() override
-    {
-        return 'h';
-    };
-
-    ~hardcoreProfile() override {};
-
-};
 
 void mainMenu()
 {
@@ -91,7 +61,7 @@ std::vector<autoFarmer> initfarmer(){
     return f;
 }
 
-void quitGame(std::vector<playerProfile>  l, playerProfile currentProfile) {
+void quitGame(std::vector<normalProfile>  l, normalProfile currentProfile) {
     std::ifstream f("userdata/players.txt");
     if (f.good()) {
         fs::remove("userdata/players_obsolete.txt");
@@ -146,9 +116,9 @@ void quitGame(std::vector<playerProfile>  l, playerProfile currentProfile) {
 //    }
 //}
 
-std::vector<playerProfile> readBasicPlayers(std::vector<autoFarmer> farm, std::vector<boost> b)
+std::vector<normalProfile> readBasicPlayers(std::vector<autoFarmer> farm, std::vector<boost> b)
 {
-    std::vector<playerProfile>  l;
+    std::vector<normalProfile>  l;
     std::ifstream testforfile("userdata/players.txt");
     if(!testforfile.good())
     {
@@ -161,81 +131,95 @@ std::vector<playerProfile> readBasicPlayers(std::vector<autoFarmer> farm, std::v
     testforfile.close();
     std::ifstream f("userdata/players.txt");
 
-    std::string playerName;
     long long int bal;
-    char line[10001];
 
     std::vector<autoFarmer> farmers;
     std::vector<int> count;
 
     std::deque<boost> boosts;
-    std::string boostname;
-    int boostuses;
+    std::string boostname, boostcnt, farmername, line, playerName, cnt;
+
+    int spaces;
     while(getline(f, playerName)) // read all playerdata file
     {
+        boostname.clear();
+        boostcnt.clear();
+        spaces = 0;
         farmers.clear();
         count.clear();
         boosts.clear();
         f >> bal;
         f.get();
-        std::memset(line, 0, 10001);
-        f.getline(line,sizeof(line));
-        char * pch;
+        getline(f, line);
 
-
-        pch = std::strpbrk(line, " "); // farmers
-        while(pch != nullptr)
-        {
-            for(auto i : farm)
-            {
-                bool matching = true;
-                for(size_t j = 0; j < i.getName().size() ; j ++)
-                    if (i.getName()[j] != pch[j])
-                    {
-                        matching = false;
-                        break;
+        for(auto letter : line){
+            if(letter == ' ') {
+                for (auto i: farm) {
+                    bool matching = true;
+                    for (size_t j = 0; j < i.getName().size(); j++)
+                        if (i.getName()[j] != farmername[j]) {
+                            matching = false;
+                            break;
+                        }
+                    if (matching) {
+                        farmers.push_back(i);
                     }
-                if(matching)
-                {
-                    farmers.push_back(i);
+                }
+                farmername.clear();
+            }
+            else
+                farmername += letter;
+
+        }
+
+        getline(f, line);
+
+        for(auto letter : line){
+            if(letter == ' ') {
+                count.push_back(stoi(cnt));
+                cnt.clear();
+            }
+            else
+                cnt += letter;
+
+        }
+
+
+        getline(f, line);
+
+        for(auto letter : line){
+            if(letter == ' ') {
+                spaces ++;
+                if(spaces % 2 == 0) {
+                    for (auto i: b) {
+                        bool matching = true;
+                        for (size_t j = 0; j < i.getName().size(); j++)
+                            if (i.getName()[j] != boostname[j]) {
+                                matching = false;
+                                break;
+                            }
+                        if (matching) {
+                            boost aub{boostname, stoi(boostcnt), i.getMultiplier(), i.getPrice()};
+                            boosts.push_back(aub);
+                        }
+                    }
+                    boostname.clear();
+                    boostcnt.clear();
                 }
             }
-            pch = std::strpbrk(pch+1, " ");
-        }
-        f.getline(line,sizeof(line));
-        pch = std::strpbrk(line, " "); // count
-        while(pch != nullptr)
-        {
-            count.push_back(atoi(pch));
-            pch = std::strpbrk(pch + 1, " ");
-        }
-        f.getline(line,sizeof(line));
-        pch = std::strpbrk(line, " "); // boosts
-        while(pch != nullptr)
-        {
-            boostname = pch;
-            pch = std::strpbrk(pch+1, " ");
-            boostuses = atoi(pch);
-
-            for(auto i : b)
+            else
             {
-                bool matching = true;
-                for(size_t j = 0; j < i.getName().size() ; j ++)
-                    if (i.getName()[j] != boostname[j])
-                    {
-                        matching = false;
-                        break;
-                    }
-                if(matching)
-                {
-                    boost aub{boostname, boostuses, i.getMultiplier(), i.getPrice()};
-                    boosts.push_back(aub);
-                }
+                if(spaces % 2 == 0)
+                    boostname += letter;
+                else
+                    boostcnt += letter;
             }
 
-            pch = std::strpbrk(pch + 1, " ");
+
         }
-        playerProfile aup {playerName, bal, farmers, count, boosts};
+
+        normalProfile aup {playerName, bal, farmers, count, boosts};
+
         l.push_back(aup);
         std::cout << aup << "\n";
     }
@@ -262,7 +246,7 @@ void getReady()
     rlutil::cls();
 }
 
-void playCycle(playerProfile& currentProfile)
+void playCycle(normalProfile& currentProfile)
 {
     const int letterVal[] = {1, 3, 3, 2, 1, 4,
                              2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10,
@@ -319,7 +303,7 @@ void playCycle(playerProfile& currentProfile)
     }
 }
 
-void buyCycle(playerProfile& currentProfile, const std::vector<boost>& b, const std::vector<autoFarmer>& farm)
+void buyCycle(normalProfile& currentProfile, const std::vector<boost>& b, const std::vector<autoFarmer>& farm)
 {
     std::string userInput = "";
 
@@ -379,10 +363,10 @@ void buyCycle(playerProfile& currentProfile, const std::vector<boost>& b, const 
 int main()
 {
     std::vector<boost> b = initboost();
-    std::vector<playerProfile>  basicPlayers;
+    std::vector<normalProfile>  basicPlayers;
 //    std::vector<hardcoreProfile>  hardcorePlayers;
     std::vector<autoFarmer> farm = initfarmer();
-    playerProfile currentProfile;
+    normalProfile currentProfile;
     std::string userInput;
     bool logged = false;
     int failcount = 0;
@@ -417,7 +401,7 @@ int main()
 //                        if (nameused) throw naming_error{"This name is already on the list. Give me antoher one."};
 //                        if (!nameused)
 //                        {
-                            playerProfile aup{userInput};
+                            normalProfile aup{userInput};
                             currentProfile = aup;
                             basicPlayers.push_back(currentProfile);
                             logged = true;
@@ -475,7 +459,7 @@ int main()
             }
             else if(userInput[0] == 'c' || userInput[0] == 'C')
             {
-                playerProfile aup = currentProfile;
+                normalProfile aup = currentProfile;
                 aup.setName("copy of " + currentProfile.getName());
                 basicPlayers.push_back(aup);
             }
