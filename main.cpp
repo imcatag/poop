@@ -139,12 +139,12 @@ std::vector<normalProfile> readBasicPlayers(std::vector<autoFarmer> farm, std::v
     std::deque<boost> boosts;
     std::string boostname, boostcnt, farmername, line, playerName, cnt;
 
-    int spaces;
+
     while(getline(f, playerName)) // read all playerdata file
     {
         boostname.clear();
         boostcnt.clear();
-        spaces = 0;
+        int spaces = 0;
         farmers.clear();
         count.clear();
         boosts.clear();

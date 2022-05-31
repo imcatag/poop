@@ -24,7 +24,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 ###############################################################################
 
 # NOTE: update executable name in .github/workflows/cmake.yml when changing name here
-add_executable(${PROJECT_NAME} main.cpp boost.cpp boost.h autoFarmer.cpp autoFarmer.h obsolete/playerProfile.cpp obsolete/playerProfile.h wordlist.h wordlist.cpp errors.h profileMinimal.cpp profileMinimal.h normalProfile.cpp normalProfile.h hardcoreProfile.cpp hardcoreProfile.h)
+add_executable(${PROJECT_NAME} main.cpp boost.cpp boost.h autoFarmer.cpp autoFarmer.h wordlist.h wordlist.cpp errors.h profileMinimal.cpp profileMinimal.h normalProfile.cpp normalProfile.h hardcoreProfile.cpp hardcoreProfile.h)
 
 ###############################################################################
 
