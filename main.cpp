@@ -221,7 +221,7 @@ std::vector<normalProfile> readBasicPlayers(std::vector<autoFarmer> farm, std::v
         normalProfile aup {playerName, bal, farmers, count, boosts};
 
         l.push_back(aup);
-        std::cout << aup << "\n";
+        std::cout << aup << "\n" << aup.profileType() << "\n";
     }
     f.close();
     return l;
