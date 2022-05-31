@@ -32,7 +32,7 @@ public:
     profileMinimal(const std::string &name, long long int balance);
 
     virtual ~profileMinimal();
-    virtual char profileType();
+    [[maybe_unused]] virtual char profileType();
     virtual void addBoost(const boost& b);
     virtual void print(std::ostream& os) const;
 
