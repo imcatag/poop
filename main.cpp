@@ -234,6 +234,19 @@ std::vector<std::shared_ptr<profileMinimal>> readBasicPlayers(const std::vector<
 
         }
 
+        for (const auto& i: b) {
+            bool matching = true;
+            for (size_t j = 0; j < i.getName().size(); j++)
+                if (i.getName()[j] != boostname[j]) {
+                    matching = false;
+                    break;
+                }
+            if (matching) {
+                boost aub{boostname, stoi(boostcnt), i.getMultiplier(), i.getPrice()};
+                boosts.push_back(aub);
+            }
+        }
+
         normalProfile aup {playerName, bal, farmers, count, boosts};
 
         l.push_back(aup.clone());
