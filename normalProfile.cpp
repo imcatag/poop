@@ -52,7 +52,7 @@ float normalProfile::multi(){
     }
 }
 
-char normalProfile::profileType() {
+[[maybe_unused]] char normalProfile::profileType() {
     return 'b';
 }
 
