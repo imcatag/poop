@@ -48,10 +48,6 @@ profileMinimal::~profileMinimal() {
 
 }
 
-char profileMinimal::profileType() {
-    return '-';
-}
-
 void profileMinimal::addBoost([[maybe_unused]] const boost &b) {
     std::cout << "this is an undefined profile type";
 

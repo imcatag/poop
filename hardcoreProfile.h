@@ -12,31 +12,22 @@
 class [[maybe_unused]] hardcoreProfile : public profileMinimal
 {
 public:
-    [[maybe_unused]] explicit hardcoreProfile(const std::string &name_) : profileMinimal(name_)
-    {
-        //std::cout << "Created profile " << name << "\n";
-    };
+    [[maybe_unused]] explicit hardcoreProfile(const std::string &name_);
 
-    [[maybe_unused]] hardcoreProfile(const std::string &name_, const long long int bal_) : profileMinimal(name_, bal_)
-    {
+    [[maybe_unused]] hardcoreProfile(const std::string &name_, const long long int bal_);
+    void addBoost ([[maybe_unused]] const boost& b) override;
 
-    };
-    void addBoost ([[maybe_unused]] const boost& b) override
-    {
-        std::cout << "\nUnable to buy boosts on hardcore account!\n";
-    }
+    [[maybe_unused]] static void whatIsHardcore();
 
-    [[maybe_unused]] static void whatIsHardcore()
-    {
-        std::cout << "\nThis is a hardcore account. You are not able to buy boosts and farmers.";
-    }
+    [[maybe_unused]] char profileType() override;
 
-    [[maybe_unused]] char profileType() override
-    {
-        return 'h';
-    };
+    void print(std::ostream& os) const override;
 
     ~hardcoreProfile() override {};
+
+    //
+
+    std::shared_ptr<profileMinimal> clone() const override;
 
 };
 

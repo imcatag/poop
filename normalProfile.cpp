@@ -60,7 +60,7 @@ void normalProfile::print(std::ostream &os) const{
     profileMinimal::print(os);
     //std::cout << "WHY AM I NOT HERE";
     const auto& p = *this;
-    os << "\n\tfarmers:{";
+    os << "\tfarmers:{";
     for(size_t i = 0; i < p.farmers.size(); i++)
     {
         os<< "\n" << "\t" << p.farmers[i].getName() << " x" << p.count[i];
@@ -80,4 +80,8 @@ normalProfile::normalProfile(const normalProfile &other) : profileMinimal(other)
 
 normalProfile::~normalProfile() {
 
+}
+
+std::shared_ptr<profileMinimal> normalProfile::clone() const {
+    return std::make_shared<normalProfile>(*this);
 }

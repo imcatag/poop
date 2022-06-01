@@ -7,6 +7,7 @@
 
 
 #include <string>
+#include <memory>
 #include "boost.h"
 
 class profileMinimal {
@@ -32,10 +33,13 @@ public:
     profileMinimal(const std::string &name, long long int balance);
 
     virtual ~profileMinimal();
-    [[maybe_unused]] virtual char profileType();
+    [[maybe_unused]] virtual char profileType() = 0;
     virtual void addBoost(const boost& b);
-    virtual void print(std::ostream& os) const;
+    virtual void print(std::ostream& os) const = 0;
 
+    //pointer stuff goes under this
+
+    [[maybe_unused]] [[nodiscard]] virtual std::shared_ptr<profileMinimal> clone() const = 0;
 
 };
 
