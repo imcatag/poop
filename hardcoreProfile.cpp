@@ -30,3 +30,9 @@ void hardcoreProfile::print(std::ostream &os) const {
     const auto& p = *this;
     os << p.name << " " << p.balance << " (HARDCORE)\n";
 }
+
+hardcoreProfile &hardcoreProfile::operator=(const hardcoreProfile &other) {
+    balance = other.balance;
+    name = other.name;
+    return *this;
+}

@@ -25,9 +25,11 @@ public:
 
     ~hardcoreProfile() override {};
 
+    hardcoreProfile & operator = (const hardcoreProfile &);
+
     //
 
-    std::shared_ptr<profileMinimal> clone() const override;
+    [[nodiscard]] std::shared_ptr<profileMinimal> clone() const override;
 
 };
 

@@ -31,9 +31,11 @@ public:
     void print(std::ostream &os) const override;
     ~normalProfile() override;
 
+
+
     //
 
-    std::shared_ptr<profileMinimal> clone() const override;
+    [[nodiscard]] std::shared_ptr<profileMinimal> clone() const override;
 };
 
 

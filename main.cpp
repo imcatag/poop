@@ -75,13 +75,13 @@ void quitGame(std::vector<std::shared_ptr<profileMinimal>>  l, const std::shared
     l.push_back(currentProfile);
     std::ofstream basicoutput("userdata/players.txt");
     std::ofstream hardcoreoutput("userdata/hardcoreplayers.txt");
-    for (auto i: l) {
+    for (const auto& i: l) {
         std::shared_ptr profile = std::dynamic_pointer_cast<normalProfile>(i);
         //auto* profile = dynamic_pointer_cast<normalProfile*> (i);
         if (profile != nullptr) {
             basicoutput << profile->getName() << "\n";
             basicoutput << profile->getBal() << "\n";
-            for (auto j: profile->getFarmers()) {
+            for (const auto& j: profile->getFarmers()) {
                 basicoutput << j.getName() << " ";
             }
             basicoutput << "\n";
@@ -132,7 +132,7 @@ std::vector<std::shared_ptr<profileMinimal>> readHardcorePlayers()
     return l;
 }
 
-std::vector<std::shared_ptr<profileMinimal>> readBasicPlayers(std::vector<autoFarmer> farm, std::vector<boost> b)
+std::vector<std::shared_ptr<profileMinimal>> readBasicPlayers(const std::vector<autoFarmer>& farm, const std::vector<boost>& b)
 {
     std::vector<std::shared_ptr<profileMinimal>>  l;
     std::ifstream testforfile("userdata/players.txt");
@@ -170,7 +170,7 @@ std::vector<std::shared_ptr<profileMinimal>> readBasicPlayers(std::vector<autoFa
 
         for(auto letter : line){
             if(letter == ' ') {
-                for (auto i: farm) {
+                for (const auto& i: farm) {
                     bool matching = true;
                     for (size_t j = 0; j < i.getName().size(); j++)
                         if (i.getName()[j] != farmername[j]) {
@@ -207,7 +207,7 @@ std::vector<std::shared_ptr<profileMinimal>> readBasicPlayers(std::vector<autoFa
             if(letter == ' ') {
                 spaces ++;
                 if(spaces % 2 == 0) {
-                    for (auto i: b) {
+                    for (const auto& i: b) {
                         bool matching = true;
                         for (size_t j = 0; j < i.getName().size(); j++)
                             if (i.getName()[j] != boostname[j]) {
@@ -271,7 +271,7 @@ void playCycle(std::shared_ptr<profileMinimal> currentProfile)
     while(true)
     {
         try {
-            std::string s = "", userInput = "";
+            std::string s, userInput;
 
             int totalvalue = 0;
             int numberowords = Random::get(10, 12);
@@ -320,10 +320,10 @@ void playCycle(std::shared_ptr<profileMinimal> currentProfile)
     }
 }
 
-void buyCycle(std::shared_ptr<profileMinimal> currentProfile, const std::vector<boost>& b, const std::vector<autoFarmer>& farm)
+void buyCycle(const std::shared_ptr<profileMinimal>& currentProfile, const std::vector<boost>& b, const std::vector<autoFarmer>& farm)
 {
     if(currentProfile->profileType() == 'h'){std::cout << "This is a hardcore profile. Can't go shopping."; rlutil::msleep(1200); return;}
-    std::string userInput = "";
+    std::string userInput;
 
     rlutil::cls();
     std::cout << "b for boosts\nf for autofarmers\n";
@@ -331,7 +331,7 @@ void buyCycle(std::shared_ptr<profileMinimal> currentProfile, const std::vector<
     if(userInput[0] == 'b' || userInput[0] == 'B')
     {
         rlutil::cls();
-        for(auto i : b)
+        for(const auto& i : b)
         {
             std::cout << i << "\n";
         }
@@ -342,7 +342,7 @@ void buyCycle(std::shared_ptr<profileMinimal> currentProfile, const std::vector<
         else
         {
             bool found = false;
-            for(auto i : b)
+            for(const auto& i : b)
             {
                 if(i.getName() == userInput)
                 {
@@ -369,7 +369,7 @@ void buyCycle(std::shared_ptr<profileMinimal> currentProfile, const std::vector<
     else if(userInput[0] == 'f' || userInput[0] == 'F')
     {
         rlutil::cls();
-        for(auto i : farm)
+        for(const auto& i : farm)
         {
             std::cout << i << "\n";
         }
@@ -413,7 +413,7 @@ int main()
                             //bool nameused = false;
                             if(userInput.length() < 2)
                                 throw naming_error{"This name is too short. Give me antoher one.\n"};
-                            for (auto i: profileList) {
+                            for (const auto& i: profileList) {
                                 if (i->getName() == userInput) {
                                     throw naming_error{"This name is already on the list. Give me antoher one.\n"};
 //                                nameused = true;
@@ -448,7 +448,7 @@ int main()
                             //bool nameused = false;
                             if(userInput.length() < 2)
                                 throw naming_error{"This name is too short. Give me antoher one.\n"};
-                            for (auto i: profileList) {
+                            for (const auto& i: profileList) {
                                 if (i->getName() == userInput) {
                                     throw naming_error{"This name is already on the list. Give me antoher one.\n"};
 //                                nameused = true;
@@ -477,7 +477,7 @@ int main()
                 {
 
                     bool matching = false;
-                    for(auto i : profileList)
+                    for(const auto& i : profileList)
                     {
                         if(userInput == i->getName())
                         {
@@ -516,7 +516,7 @@ int main()
             }
             else if(userInput[0] == 'c' || userInput[0] == 'C')
             {
-                auto aup = currentProfile;
+                auto aup = currentProfile->clone();
                 aup->setName("copy of " + currentProfile->getName());
                 profileList.push_back(aup);
             }
