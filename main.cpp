@@ -413,7 +413,7 @@ int main()
                             //bool nameused = false;
                             if(userInput.length() < 2)
                                 throw naming_error{"This name is too short. Give me antoher one.\n"};
-                            for (const auto& i: profileList) {
+                            for (auto i: profileList) {
                                 if (i->getName() == userInput) {
                                     throw naming_error{"This name is already on the list. Give me antoher one.\n"};
 //                                nameused = true;
@@ -448,7 +448,7 @@ int main()
                             //bool nameused = false;
                             if(userInput.length() < 2)
                                 throw naming_error{"This name is too short. Give me antoher one.\n"};
-                            for (const auto& i: profileList) {
+                            for (auto i: profileList) {
                                 if (i->getName() == userInput) {
                                     throw naming_error{"This name is already on the list. Give me antoher one.\n"};
 //                                nameused = true;
@@ -477,7 +477,7 @@ int main()
                 {
 
                     bool matching = false;
-                    for(const auto& i : profileList)
+                    for(auto i : profileList)
                     {
                         if(userInput == i->getName())
                         {
