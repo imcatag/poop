@@ -322,6 +322,7 @@ void playCycle(std::shared_ptr<profileMinimal> currentProfile)
 
 void buyCycle(std::shared_ptr<profileMinimal> currentProfile, const std::vector<boost>& b, const std::vector<autoFarmer>& farm)
 {
+    if(currentProfile->profileType() == 'h'){std::cout << "This is a hardcore profile. Can't go shopping."; rlutil::msleep(1200); return;}
     std::string userInput = "";
 
     rlutil::cls();
