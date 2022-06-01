@@ -22,10 +22,6 @@ void hardcoreProfile::addBoost([[maybe_unused]] const boost &b) {
     std::cout << "\nUnable to buy boosts on hardcore account!\n";
 }
 
-[[maybe_unused]] void hardcoreProfile::whatIsHardcore() {
-    std::cout << "\nThis is a hardcore account. You are not able to buy boosts and farmers.";
-}
-
 char hardcoreProfile::profileType() {
     return 'h';
 }

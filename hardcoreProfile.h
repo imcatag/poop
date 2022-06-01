@@ -17,7 +17,7 @@ public:
     [[maybe_unused]] hardcoreProfile(const std::string &name_, const long long int bal_);
     void addBoost ([[maybe_unused]] const boost& b) override;
 
-    [[maybe_unused]] static void whatIsHardcore();
+    //[[maybe_unused]] static void whatIsHardcore();
 
     [[maybe_unused]] char profileType() override;
 
