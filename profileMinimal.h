@@ -17,16 +17,16 @@ protected:
     bool shopping;
 
 public:
-    [[maybe_unused]] virtual void changeBal(long long int x);
-    [[maybe_unused]] void setName(const std::string& s);
-    [[maybe_unused]] std::string getName();
-    [[maybe_unused]] virtual long long int getBal();
+    virtual void changeBal(long long int x);
+    void setName(const std::string& s);
+    std::string getName();
+    virtual long long int getBal();
     explicit profileMinimal(const std::string& name_= "untitled", bool shopping_ = true);
     profileMinimal(const std::string &name, long long int balance, bool shopping_ = true);
 
     profileMinimal& operator=(const profileMinimal& other);
 
-    [[maybe_unused]] virtual float multi ();
+    virtual float multi ();
     friend std::ostream& operator<<(std::ostream& os, const profileMinimal& p);
 
     [[maybe_unused]] profileMinimal(const profileMinimal& other);
@@ -40,7 +40,7 @@ public:
 
     //pointer stuff goes under this
 
-    [[maybe_unused]] [[nodiscard]] virtual std::shared_ptr<profileMinimal> clone() const = 0;
+    [[nodiscard]] virtual std::shared_ptr<profileMinimal> clone() const = 0;
 
 };
 

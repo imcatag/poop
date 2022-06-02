@@ -12,9 +12,9 @@
 class [[maybe_unused]] hardcoreProfile : public profileMinimal
 {
 public:
-    [[maybe_unused]] explicit hardcoreProfile(const std::string &name_);
+    explicit hardcoreProfile(const std::string &name_);
 
-    [[maybe_unused]] hardcoreProfile(const std::string &name_, long long int bal_);
+    hardcoreProfile(const std::string &name_, long long int bal_);
     void addBoost ([[maybe_unused]] const boost& b) override;
 
     //[[maybe_unused]] static void whatIsHardcore();

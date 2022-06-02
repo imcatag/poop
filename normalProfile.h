@@ -19,9 +19,9 @@ private:
     std::deque<boost> boosts;
 
 public:
-    [[maybe_unused]] std::deque<boost> getBoosts();
-    [[maybe_unused]] std::vector<int> getCount();
-    [[maybe_unused]] std::vector<autoFarmer> getFarmers();
+    std::deque<boost> getBoosts();
+    std::vector<int> getCount();
+    std::vector<autoFarmer> getFarmers();
     explicit normalProfile(const std::string& name_= "untitled");
     normalProfile(const std::string& name_, long long int balance_, const std::vector<autoFarmer>& farmers_, const std::vector<int>& count_,const std::deque<boost>& boosts_);
     normalProfile& operator=(const normalProfile& other);

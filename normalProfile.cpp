@@ -50,13 +50,12 @@ float normalProfile::multi(){
     }
 }
 
-[[maybe_unused]] char normalProfile::profileType() {
+char normalProfile::profileType() {
     return 'b';
 }
 
 void normalProfile::print(std::ostream &os) const{
     profileMinimal::print(os);
-    //std::cout << "WHY AM I NOT HERE";
     const auto& p = *this;
     os << "\tfarmers:{";
     for(size_t i = 0; i < p.farmers.size(); i++)
