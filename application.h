@@ -29,19 +29,15 @@ public:
         return app;
     }
 
-    void setBoostList(std::vector<boost> boostList_ );
-    void setFarmList(std::vector<autoFarmer> farmList_);
+    void setBoostList(const std::vector<boost>& boostList_ );
+    void setFarmList(const std::vector<autoFarmer>& farmList_);
+    void setCurrentProfile(std::shared_ptr<profileMinimal> currentProfile);
+    void setProfileList(const std::vector<std::shared_ptr<profileMinimal>>& profileList);
 
     [[nodiscard]] const std::vector<boost> &getBoostList() const;
     [[nodiscard]] const std::vector<autoFarmer> &getFarmList() const;
-
     [[nodiscard]] const std::vector<std::shared_ptr<profileMinimal>> &getProfileList() const;
-
-    void setProfileList(std::vector<std::shared_ptr<profileMinimal>> profileList);
-
-    const std::shared_ptr<profileMinimal> &getCurrentProfile() const;
-
-    void setCurrentProfile(std::shared_ptr<profileMinimal> currentProfile);
+    [[nodiscard]] const std::shared_ptr<profileMinimal> &getCurrentProfile() const;
 
     void addToProfileList(std::shared_ptr<profileMinimal> profile);
 };

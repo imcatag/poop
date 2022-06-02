@@ -4,11 +4,11 @@
 
 #include "application.h"
 
-void application::setBoostList(std::vector<boost> boostList_) {
+void application::setBoostList(const std::vector<boost>& boostList_) {
     boostList = boostList_;
 }
 
-void application::setFarmList(std::vector<autoFarmer> farmList_) {
+void application::setFarmList(const std::vector<autoFarmer>& farmList_) {
     farmList = farmList_;
 }
 
@@ -24,7 +24,7 @@ const std::vector<std::shared_ptr<profileMinimal>> &application::getProfileList(
     return profileList;
 }
 
-void application::setProfileList(std::vector<std::shared_ptr<profileMinimal>> profileList_) {
+void application::setProfileList(const std::vector<std::shared_ptr<profileMinimal>>& profileList_) {
     profileList = profileList_;
 }
 
