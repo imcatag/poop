@@ -42,7 +42,7 @@
 ## Tema 3
 
 #### Cerințe
-- [ ] 2 șabloane de proiectare (design patterns)
+- [x] 2 șabloane de proiectare (design patterns)
 - [ ] o funcție șablon (template) cu sens; minim 2 instanțieri
 - [ ] o clasă șablon cu sens; minim 2 instanțieri
 - [ ] o specializare pe funcție/clasă șablon
@@ -50,5 +50,5 @@
 
 ## Resurse
 
-- [Wordlist](http://norvig.com/ngrams/)
+- [Wordlist (o parte din count_1w.txt)](http://norvig.com/ngrams/)
 - [rlutil](https://github.com/tapio/rlutil)

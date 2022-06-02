@@ -375,7 +375,6 @@ void quitGame(std::vector<std::shared_ptr<profileMinimal>>  l, const std::shared
     std::ofstream hardcoreoutput("userdata/hardcoreplayers.txt");
     for (const auto& i: l) {
         std::shared_ptr profile = std::dynamic_pointer_cast<normalProfile>(i);
-        //auto* profile = dynamic_pointer_cast<normalProfile*> (i);
         if (profile != nullptr) {
             normalProfile_decorator dec {*profile};
             basicoutput << dec;
@@ -405,7 +404,6 @@ int main()
         {
             std::cout << "Choose a profile or type \'new\' / \'new hardcore\' to create a new profile\n";
             app.setProfileList(initplayerlist());
-//            hardcorePlayers = readHardcorePlayers();
             while(true) // profile selection loop
             {
                 if(logged) break;
@@ -428,15 +426,11 @@ int main()
                                     break;
                                 }
                             }
-//                        if (nameused) throw naming_error{"This name is already on the list. Give me antoher one."};
-//                        if (!nameused)
-//                        {
                             normalProfile aup{userInput};
                             app.setCurrentProfile(aup.clone());
                             app.addToProfileList(aup.clone());
                             logged = true;
                             break;
-//                        }
                         }
                         catch (app_error &err) {
                             if (tries > 5) {std::cout << "You're obviously not here to create a new profile so I'm going. Bye!"; return 0;}
@@ -483,7 +477,6 @@ int main()
                 }
                 else
                 {
-
                     bool matching = false;
                     for(auto i : app.getProfileList())
                     {
@@ -508,7 +501,6 @@ int main()
                     if(failcount >= 5) break;
                 }
             }
-
         }
         while(true) // most user interaction happens here
         {
@@ -546,7 +538,6 @@ int main()
             }
             else {std::cout << "No clue what you're trying to do."; return 0;}
         }
-
         break;
     }
 
