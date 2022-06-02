@@ -13,7 +13,7 @@ hardcoreProfile::hardcoreProfile(const std::string &name_) : profileMinimal(name
     //std::cout << "Created profile " << name << "\n";
 }
 
-hardcoreProfile::hardcoreProfile(const std::string &name_, const long long int bal_) : profileMinimal(name_, bal_)
+hardcoreProfile::hardcoreProfile(const std::string &name_, long long int bal_) : profileMinimal(name_, bal_)
 {
 
 }
@@ -36,3 +36,19 @@ hardcoreProfile &hardcoreProfile::operator=(const hardcoreProfile &other) {
     name = other.name;
     return *this;
 }
+
+hardcoreProfile::hardcoreProfile(const hardcoreProfile &other) : profileMinimal(other) {}
+
+
+const hardcoreProfile &hardcoreProfile_decorator::getProfile() const {
+    return profile;
+}
+
+std::ostream &operator<<(std::ostream &os, const hardcoreProfile_decorator &decorator) {
+    auto profilehardcore = decorator.getProfile();
+    os << profilehardcore.getName() << "\n" << profilehardcore.getBal() << "\n";
+    return os;
+}
+
+hardcoreProfile_decorator::hardcoreProfile_decorator(const hardcoreProfile &profile) : profile(profile) {}
+

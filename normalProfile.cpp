@@ -85,3 +85,30 @@ normalProfile::~normalProfile() {
 std::shared_ptr<profileMinimal> normalProfile::clone() const {
     return std::make_shared<normalProfile>(*this);
 }
+
+// deco
+
+normalProfile_decorator::normalProfile_decorator(const normalProfile &profile) : profile(profile) {}
+
+std::ostream &operator<<(std::ostream &os, const normalProfile_decorator &decorator) {
+    auto profile = decorator.getProfile();
+    os << profile.getName() << "\n";
+    os << profile.getBal() << "\n";
+    for (const auto& j: profile.getFarmers()) {
+        os << j.getName() << " ";
+    }
+    os << "\n";
+    for (auto j: profile.getCount()) {
+        os << j << " ";
+    }
+    os << "\n";
+    for (size_t j = 0; j < profile.getBoosts().size(); j++) {
+        os << profile.getBoosts()[j].getName() << " " << profile.getBoosts()[j].getUses() << " ";
+    }
+    os << "\n";
+    return os;
+}
+
+const normalProfile &normalProfile_decorator::getProfile() const {
+    return profile;
+}

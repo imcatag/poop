@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <deque>
+#include <ostream>
 #include "profileMinimal.h"
 #include "autoFarmer.h"
 
@@ -38,5 +39,17 @@ public:
     [[nodiscard]] std::shared_ptr<profileMinimal> clone() const override;
 };
 
+class normalProfile_decorator{
+public:
+    [[maybe_unused]] explicit normalProfile_decorator(const normalProfile &profile);
 
+    friend std::ostream &operator<<(std::ostream &os, const normalProfile_decorator &decorator);
+
+    [[nodiscard]] const normalProfile &getProfile() const;
+
+private:
+    normalProfile profile;
+public:
+
+};
 #endif //OOP_NORMALPROFILE_H

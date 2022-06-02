@@ -14,7 +14,7 @@ class [[maybe_unused]] hardcoreProfile : public profileMinimal
 public:
     [[maybe_unused]] explicit hardcoreProfile(const std::string &name_);
 
-    [[maybe_unused]] hardcoreProfile(const std::string &name_, const long long int bal_);
+    [[maybe_unused]] hardcoreProfile(const std::string &name_, long long int bal_);
     void addBoost ([[maybe_unused]] const boost& b) override;
 
     //[[maybe_unused]] static void whatIsHardcore();
@@ -25,7 +25,9 @@ public:
 
     ~hardcoreProfile() override {};
 
-    hardcoreProfile & operator = (const hardcoreProfile &);
+    hardcoreProfile(const hardcoreProfile& other);
+
+    hardcoreProfile & operator = (const hardcoreProfile &other);
 
     //
 
@@ -33,5 +35,20 @@ public:
 
 };
 
+
+class hardcoreProfile_decorator{
+public:
+
+    [[maybe_unused]] explicit hardcoreProfile_decorator(const hardcoreProfile &profile);
+
+    friend std::ostream &operator<<(std::ostream &os, const hardcoreProfile_decorator &decorator);
+
+    [[nodiscard]] const hardcoreProfile &getProfile() const;
+
+private:
+    hardcoreProfile profile;
+public:
+
+};
 
 #endif //OOP_HARDCOREPROFILE_H

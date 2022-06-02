@@ -377,24 +377,14 @@ void quitGame(std::vector<std::shared_ptr<profileMinimal>>  l, const std::shared
         std::shared_ptr profile = std::dynamic_pointer_cast<normalProfile>(i);
         //auto* profile = dynamic_pointer_cast<normalProfile*> (i);
         if (profile != nullptr) {
-            basicoutput << profile->getName() << "\n";
-            basicoutput << profile->getBal() << "\n";
-            for (const auto& j: profile->getFarmers()) {
-                basicoutput << j.getName() << " ";
-            }
-            basicoutput << "\n";
-            for (auto j: profile->getCount()) {
-                basicoutput << j << " ";
-            }
-            basicoutput << "\n";
-            for (size_t j = 0; j < profile->getBoosts().size(); j++) {
-                basicoutput << profile->getBoosts()[j].getName() << " " << profile->getBoosts()[j].getUses() << " ";
-            }
-            basicoutput << "\n";
+            normalProfile_decorator dec {*profile};
+            basicoutput << dec;
         }
         else {
+
             std::shared_ptr profilehardcore = std::dynamic_pointer_cast<hardcoreProfile>(i);
-            hardcoreoutput << profilehardcore->getName() << "\n" << profilehardcore->getBal() << "\n";
+            hardcoreProfile_decorator dec {*profilehardcore};
+            hardcoreoutput << dec;
         }
     }
 }
@@ -403,13 +393,8 @@ void quitGame(std::vector<std::shared_ptr<profileMinimal>>  l, const std::shared
 int main()
 {
     auto& app = application::get_app();
-    //std::vector<boost> boostList = initboost();
-    //std::vector<autoFarmer> farmList = initfarmer();
-    //std::vector<std::shared_ptr<profileMinimal>> profileList;
-//    std::vector<hardcoreProfile>  hardcorePlayers;
     app.setBoostList(initboost());
     app.setFarmList(initfarmer());
-    //std::shared_ptr<profileMinimal> currentProfile;
     std::string userInput;
     bool logged = false;
     int failcount = 0;

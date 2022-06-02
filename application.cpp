@@ -40,3 +40,8 @@ void application::addToProfileList(std::shared_ptr<profileMinimal> profile) {
     profileList.push_back(profile->clone());
 }
 
+application &application::get_app() {
+    static application app;
+    return app;
+}
+

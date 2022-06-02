@@ -24,10 +24,7 @@ private:
 public:
     application(const application&) = delete;
     application& operator=(const application&) = delete;
-    static application& get_app() {
-        static application app;
-        return app;
-    }
+    static application& get_app();
 
     void setBoostList(const std::vector<boost>& boostList_ );
     void setFarmList(const std::vector<autoFarmer>& farmList_);
