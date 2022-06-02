@@ -1,6 +1,9 @@
 //
 // Created by catag on 6/2/2022.
 //
+#ifdef _MSC_VER
+    #pragma warning( disable : 4267 )
+#endif
 
 #include "application.h"
 #include "normalProfile.h"

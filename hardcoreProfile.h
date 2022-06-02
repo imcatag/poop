@@ -19,7 +19,7 @@ public:
 
     //[[maybe_unused]] static void whatIsHardcore();
 
-    [[maybe_unused]] char profileType() override;
+//    [[maybe_unused]] char profileType() override;
 
     void print(std::ostream& os) const override;
 

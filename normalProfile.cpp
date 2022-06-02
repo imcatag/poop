@@ -50,9 +50,9 @@ float normalProfile::multi(){
     }
 }
 
-char normalProfile::profileType() {
-    return 'b';
-}
+//char normalProfile::profileType() {
+//    return 'b';
+//}
 
 void normalProfile::print(std::ostream &os) const{
     profileMinimal::print(os);

@@ -16,9 +16,9 @@ void hardcoreProfile::addBoost([[maybe_unused]] const boost &b) {
     std::cout << "\nUnable to buy boosts on hardcore account!\n";
 }
 
-char hardcoreProfile::profileType() {
-    return 'h';
-}
+//char hardcoreProfile::profileType() {
+//    return 'h';
+//}
 
 void hardcoreProfile::print(std::ostream &os) const {
     const auto& p = *this;

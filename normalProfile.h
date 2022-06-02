@@ -28,7 +28,7 @@ public:
     normalProfile(const normalProfile& other);
     void addBoost(const boost& b) override;
     float multi() override;
-    [[maybe_unused]] char profileType() override;
+//    [[maybe_unused]] char profileType() override;
     void print(std::ostream &os) const override;
     ~normalProfile() override;
 
