@@ -18,14 +18,11 @@ std::vector<autoFarmer> normalProfile::getFarmers() {
     return farmers;
 }
 
-normalProfile::normalProfile(const std::string &name_) : profileMinimal(name_) {
 
-}
+normalProfile::normalProfile(const std::string &name_) : profileMinimal(name_, true) {}
 
 normalProfile::normalProfile(const std::string &name_, long long int balance_, const std::vector<autoFarmer> &farmers_,
-                             const std::vector<int> &count_, const std::deque<boost> &boosts_) : profileMinimal(name_,balance_), farmers(farmers_), count(count_), boosts(boosts_){
-
-}
+                             const std::vector<int> &count_, const std::deque<boost> &boosts_) : profileMinimal(name_,balance_, true), farmers(farmers_), count(count_), boosts(boosts_){}
 
 normalProfile &normalProfile::operator=(const normalProfile &other) {
     name = other.name;
@@ -33,6 +30,7 @@ normalProfile &normalProfile::operator=(const normalProfile &other) {
     farmers = other.farmers;
     count = other.count;
     boosts = other.boosts;
+    shopping = other.shopping;
     return *this;
 }
 

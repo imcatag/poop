@@ -49,7 +49,5 @@ public:
 
 private:
     normalProfile profile;
-public:
-
 };
 #endif //OOP_NORMALPROFILE_H

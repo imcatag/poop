@@ -22,7 +22,7 @@ long long int profileMinimal::getBal() {
     return balance;
 }
 
-profileMinimal::profileMinimal(const std::string &name_) : name{name_}, balance{0}
+profileMinimal::profileMinimal(const std::string &name_, bool shopping_) : name{name_}, balance{0}, shopping(shopping_)
 {
     //std::cout << "Created profile " << name << "\n";
 }
@@ -31,6 +31,7 @@ profileMinimal::profileMinimal(const std::string &name_) : name{name_}, balance{
 profileMinimal &profileMinimal::operator=(const profileMinimal &other) {
     name = other.name;
     balance = other.balance;
+    shopping = other.shopping;
     return *this;
 }
 
@@ -39,7 +40,7 @@ profileMinimal &profileMinimal::operator=(const profileMinimal &other) {
     return 1;
 }
 
-[[maybe_unused]] profileMinimal::profileMinimal(const profileMinimal &other) : name{other.name}, balance{other.balance}
+[[maybe_unused]] profileMinimal::profileMinimal(const profileMinimal &other) : name{other.name}, balance{other.balance}, shopping(other.shopping)
 {
 
 }
@@ -53,7 +54,7 @@ void profileMinimal::addBoost([[maybe_unused]] const boost &b) {
 
 }
 
-profileMinimal::profileMinimal(const std::string &name, long long int balance) : name(name), balance(balance) {}
+profileMinimal::profileMinimal(const std::string &name, long long int balance, bool shopping_) : name(name), balance(balance), shopping(shopping_) {}
 
 std::ostream &operator<<(std::ostream &os, const profileMinimal& profile) {
     profile.print(os);
@@ -63,4 +64,8 @@ std::ostream &operator<<(std::ostream &os, const profileMinimal& profile) {
 void profileMinimal::print(std::ostream &os) const {
     const auto& p = *this;
     os << p.name << " " << p.balance << "\n";
+}
+
+bool profileMinimal::canUseShop() const {
+    return shopping;
 }

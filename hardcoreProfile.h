@@ -47,8 +47,6 @@ public:
 
 private:
     hardcoreProfile profile;
-public:
-
 };
 
 #endif //OOP_HARDCOREPROFILE_H

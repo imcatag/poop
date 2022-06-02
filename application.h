@@ -21,6 +21,7 @@ private:
     std::vector<autoFarmer> farmList;
     std::shared_ptr<profileMinimal> currentProfile;
     std::vector<std::shared_ptr<profileMinimal>> profileList;
+    const int arrsize = 5584;
 public:
     application(const application&) = delete;
     application& operator=(const application&) = delete;
@@ -37,6 +38,12 @@ public:
     [[nodiscard]] const std::shared_ptr<profileMinimal> &getCurrentProfile() const;
 
     void addToProfileList(std::shared_ptr<profileMinimal> profile);
+
+    void quitGame();
+
+    void playCycle();
+
+    void buyCycle();
 };
 
 
