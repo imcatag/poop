@@ -52,3 +52,4 @@
 
 - [Wordlist (o parte din count_1w.txt)](http://norvig.com/ngrams/)
 - [rlutil](https://github.com/tapio/rlutil)
+- [Effolkronium Random](https://github.com/effolkronium/random)

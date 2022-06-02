@@ -27,13 +27,13 @@ void application::setFarmList(const std::vector<autoFarmer>& farmList_) {
     farmList = farmList_;
 }
 
-const std::vector<boost> &application::getBoostList() const {
-    return boostList;
-}
-
-const std::vector<autoFarmer> &application::getFarmList() const {
-    return farmList;
-}
+//const std::vector<boost> &application::getBoostList() const {
+//    return boostList;
+//}
+//
+//const std::vector<autoFarmer> &application::getFarmList() const {
+//    return farmList;
+//}
 
 const std::vector<std::shared_ptr<profileMinimal>> &application::getProfileList() const {
     return profileList;
@@ -206,5 +206,190 @@ void application::buyCycle() {
         std::cout << "This is totally implemented. Returning you to the menu.\n";
         rlutil::msleep(2500);
     }
+}
+
+std::vector<std::shared_ptr<profileMinimal>> application::initplayerlist() {
+    auto profileList1 = readBasicPlayers();
+    auto profileList2 = readHardcorePlayers();
+    profileList1.insert(std::end(profileList1), std::begin(profileList2), std::end(profileList2));
+    return profileList1;
+}
+
+void application::init() {
+    std::cout << "Choose a profile or type \'new\' / \'new hardcore\' to create a new profile\n";
+    setBoostList(initboost());
+    setFarmList(initfarmer());
+    setProfileList(initplayerlist());
+}
+
+std::vector<boost> application::initboost() {
+    boost b1{"2x1k", 2000, 2, 600},
+            b2{"3x1k", 1000, 3, 800},
+            b3{"4x500", 500, 4, 1000};
+    std::vector<boost> boostVector {b1, b2, b3};
+    return boostVector;
+}
+
+std::vector<autoFarmer> application::initfarmer() {
+
+    autoFarmer  f1{"2@300s", 300, 2},
+            f2{"5@600s", 600, 5},
+            f3{"12@1200s", 1200, 12};
+    std::vector<autoFarmer> f{f1, f2, f3};
+    return f;
+}
+
+std::vector<std::shared_ptr<profileMinimal>> application::readHardcorePlayers() {
+    std::vector<std::shared_ptr<profileMinimal>>  l;
+    std::ifstream testforfile("userdata/hardcoreplayers.txt");
+    if(!testforfile.good())
+    {
+        std::cout << "no file\n";
+        testforfile.close();
+        std::ofstream g("userdata/hardcoreplayers.txt");
+        g << "";
+        g.close();
+    }
+    testforfile.close();
+    std::ifstream f("userdata/hardcoreplayers.txt");
+
+    long long int bal;
+    std::string playerName;
+
+    while(getline(f, playerName)) // read all playerdata file
+    {
+        f >> bal;
+        f.get();
+
+        hardcoreProfile aup{playerName, bal};
+        l.push_back(aup.clone());
+
+        std::cout << aup << "\n";
+    }
+    return l;
+}
+
+std::vector<std::shared_ptr<profileMinimal>> application::readBasicPlayers(){
+    std::vector<std::shared_ptr<profileMinimal>>  l;
+    std::ifstream testforfile("userdata/players.txt");
+    if(!testforfile.good())
+    {
+        std::cout << "no file\n";
+        testforfile.close();
+        std::ofstream g("userdata/players.txt");
+        g << "";
+        g.close();
+    }
+    testforfile.close();
+    std::ifstream f("userdata/players.txt");
+
+    long long int bal;
+
+    std::vector<autoFarmer> farmers;
+    std::vector<int> count;
+
+    std::deque<boost> boosts;
+    std::string boostname, boostcnt, farmername, line, playerName, cnt;
+
+
+    while(getline(f, playerName)) // read all playerdata file
+    {
+        boostname.clear();
+        boostcnt.clear();
+        int spaces = 0;
+        farmers.clear();
+        count.clear();
+        boosts.clear();
+        f >> bal;
+        f.get();
+        getline(f, line);
+
+        for(auto letter : line){
+            if(letter == ' ') {
+                for (const auto& i: farmList) {
+                    bool matching = true;
+                    for (size_t j = 0; j < i.getName().size(); j++)
+                        if (i.getName()[j] != farmername[j]) {
+                            matching = false;
+                            break;
+                        }
+                    if (matching) {
+                        farmers.push_back(i);
+                    }
+                }
+                farmername.clear();
+            }
+            else
+                farmername += letter;
+
+        }
+
+        getline(f, line);
+
+        for(auto letter : line){
+            if(letter == ' ') {
+                count.push_back(stoi(cnt));
+                cnt.clear();
+            }
+            else
+                cnt += letter;
+
+        }
+
+
+        getline(f, line);
+
+        for(auto letter : line){
+            if(letter == ' ') {
+                spaces ++;
+                if(spaces % 2 == 0) {
+                    for (const auto& i: boostList) {
+                        bool matching = true;
+                        for (size_t j = 0; j < i.getName().size(); j++)
+                            if (i.getName()[j] != boostname[j]) {
+                                matching = false;
+                                break;
+                            }
+                        if (matching) {
+                            boost aub{boostname, stoi(boostcnt), i.getMultiplier(), i.getPrice()};
+                            boosts.push_back(aub);
+                        }
+                    }
+                    boostname.clear();
+                    boostcnt.clear();
+                }
+            }
+            else
+            {
+                if(spaces % 2 == 0)
+                    boostname += letter;
+                else
+                    boostcnt += letter;
+            }
+
+
+        }
+
+        for (const auto& i: boostList) {
+            bool matching = true;
+            for (size_t j = 0; j < i.getName().size(); j++)
+                if (i.getName()[j] != boostname[j]) {
+                    matching = false;
+                    break;
+                }
+            if (matching) {
+                boost aub{boostname, stoi(boostcnt), i.getMultiplier(), i.getPrice()};
+                boosts.push_back(aub);
+            }
+        }
+
+        normalProfile aup {playerName, bal, farmers, count, boosts};
+
+        l.push_back(aup.clone());
+        std::cout << aup << "\n";
+
+    }
+    f.close();
+    return l;
 }
 

@@ -22,28 +22,37 @@ private:
     std::shared_ptr<profileMinimal> currentProfile;
     std::vector<std::shared_ptr<profileMinimal>> profileList;
     const int arrsize = 5584;
+    std::vector<boost> initboost();
+    std::vector<autoFarmer> initfarmer();
+    std::vector<std::shared_ptr<profileMinimal>> initplayerlist();
+    void setBoostList(const std::vector<boost>& boostList_ );
+    void setFarmList(const std::vector<autoFarmer>& farmList_);
+    void setProfileList(const std::vector<std::shared_ptr<profileMinimal>>& profileList);
+
+    std::vector<std::shared_ptr<profileMinimal>> readHardcorePlayers();
+    std::vector<std::shared_ptr<profileMinimal>> readBasicPlayers();
 public:
     application(const application&) = delete;
     application& operator=(const application&) = delete;
     static application& get_app();
 
-    void setBoostList(const std::vector<boost>& boostList_ );
-    void setFarmList(const std::vector<autoFarmer>& farmList_);
-    void setCurrentProfile(std::shared_ptr<profileMinimal> currentProfile);
-    void setProfileList(const std::vector<std::shared_ptr<profileMinimal>>& profileList);
+    void init();
 
-    [[nodiscard]] const std::vector<boost> &getBoostList() const;
-    [[nodiscard]] const std::vector<autoFarmer> &getFarmList() const;
+    void setCurrentProfile(std::shared_ptr<profileMinimal> currentProfile);
+
+    //[[nodiscard]] const std::vector<boost> &getBoostList() const;
+    //[[nodiscard]] const std::vector<autoFarmer> &getFarmList() const;
     [[nodiscard]] const std::vector<std::shared_ptr<profileMinimal>> &getProfileList() const;
     [[nodiscard]] const std::shared_ptr<profileMinimal> &getCurrentProfile() const;
 
     void addToProfileList(std::shared_ptr<profileMinimal> profile);
 
     void quitGame();
-
     void playCycle();
-
     void buyCycle();
+
+
+
 };
 
 
