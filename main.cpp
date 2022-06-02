@@ -21,6 +21,8 @@
 #include "ext/rlutil/rlutil.h"
 #include "profileMinimal.h"
 #include "hardcoreProfile.h"
+#include "application.h"
+
 
 const int arrsize = 5584;
 using Random = effolkronium::random_static;
@@ -31,74 +33,23 @@ void mainMenu()
 {
     std::cout << "\np to play\ns for shop\nc to create a copy of current profile\nq to save and quit\n";
 }
-
-std::vector<boost> initboost() {
-    std::vector<boost> boostVector;
-    boost b1{"2x1k", 2000, 2, 600},
-            b2{"3x1k", 1000, 3, 800},
-            b3{"4x500", 500, 4, 1000};
-    boostVector.push_back(b1);
-    boostVector.push_back(b2);
-    boostVector.push_back(b3);
-    return boostVector;
-}
-
-std::vector<autoFarmer> initfarmer(){
-    std::vector<autoFarmer> f;
-    autoFarmer  f1{"2@300s", 300, 2},
-            f2{"5@600s", 600, 5},
-            f3{"12@1200s", 1200, 12};
-    f.push_back(f1);
-    f.push_back(f2);
-    f.push_back(f3);
-    return f;
-}
-
-void quitGame(std::vector<std::shared_ptr<profileMinimal>>  l, const std::shared_ptr<profileMinimal> currentProfile) {
-    std::ifstream f1("userdata/players.txt");
-    if (f1.good()) {
-        fs::remove("userdata/players_obsolete.txt");
-        fs::copy("userdata/players.txt", "userdata/players_obsolete.txt");
-    }
-    f1.close();
-
-    std::ifstream f2("userdata/hardcoreplayers.txt");
-    if (f2.good()) {
-        fs::remove("userdata/hardcoreplayers_obsolete.txt");
-        fs::copy("userdata/hardcoreplayers.txt", "userdata/hardcoreplayers_obsolete.txt");
-    }
-    f2.close();
-    for (size_t i = 0; i < l.size(); i++) {
-        if (l[i]->getName() == currentProfile->getName())
-            l.erase(l.begin() + i);
-    }
-    l.push_back(currentProfile);
-    std::ofstream basicoutput("userdata/players.txt");
-    std::ofstream hardcoreoutput("userdata/hardcoreplayers.txt");
-    for (const auto& i: l) {
-        std::shared_ptr profile = std::dynamic_pointer_cast<normalProfile>(i);
-        //auto* profile = dynamic_pointer_cast<normalProfile*> (i);
-        if (profile != nullptr) {
-            basicoutput << profile->getName() << "\n";
-            basicoutput << profile->getBal() << "\n";
-            for (const auto& j: profile->getFarmers()) {
-                basicoutput << j.getName() << " ";
-            }
-            basicoutput << "\n";
-            for (auto j: profile->getCount()) {
-                basicoutput << j << " ";
-            }
-            basicoutput << "\n";
-            for (size_t j = 0; j < profile->getBoosts().size(); j++) {
-                basicoutput << profile->getBoosts()[j].getName() << " " << profile->getBoosts()[j].getUses() << " ";
-            }
-            basicoutput << "\n";
-        }
-        else {
-            std::shared_ptr profilehardcore = std::dynamic_pointer_cast<hardcoreProfile>(i);
-            hardcoreoutput << profilehardcore->getName() << "\n" << profilehardcore->getBal() << "\n";
-        }
-    }
+void getReady()
+{
+    std::string temp1;
+    std::cout << "q to quit\n";
+    rlutil::msleep(600);
+    std::cout << "GET READY TO TYPE.\n";
+    rlutil::msleep(600);
+    std::cout << "3.\n";
+    rlutil::msleep(600);
+    std::cout << "2.\n";
+    rlutil::msleep(600);
+    std::cout << "1.\n";
+    rlutil::msleep(400);
+    std::cout << "GO!\n";
+    rlutil::msleep(400);
+    getline(std::cin, temp1);
+    rlutil::cls();
 }
 
 std::vector<std::shared_ptr<profileMinimal>> readHardcorePlayers()
@@ -131,7 +82,6 @@ std::vector<std::shared_ptr<profileMinimal>> readHardcorePlayers()
     }
     return l;
 }
-
 std::vector<std::shared_ptr<profileMinimal>> readBasicPlayers(const std::vector<autoFarmer>& farm, const std::vector<boost>& b)
 {
     std::vector<std::shared_ptr<profileMinimal>>  l;
@@ -257,24 +207,35 @@ std::vector<std::shared_ptr<profileMinimal>> readBasicPlayers(const std::vector<
     return l;
 }
 
-void getReady()
-{
-    std::string temp1;
-    std::cout << "q to quit\n";
-    rlutil::msleep(600);
-    std::cout << "GET READY TO TYPE.\n";
-    rlutil::msleep(600);
-    std::cout << "3.\n";
-    rlutil::msleep(600);
-    std::cout << "2.\n";
-    rlutil::msleep(600);
-    std::cout << "1.\n";
-    rlutil::msleep(400);
-    std::cout << "GO!\n";
-    rlutil::msleep(400);
-    getline(std::cin, temp1);
-    rlutil::cls();
+std::vector<boost> initboost() {
+    std::vector<boost> boostVector;
+    boost b1{"2x1k", 2000, 2, 600},
+            b2{"3x1k", 1000, 3, 800},
+            b3{"4x500", 500, 4, 1000};
+    boostVector.push_back(b1);
+    boostVector.push_back(b2);
+    boostVector.push_back(b3);
+    return boostVector;
 }
+std::vector<autoFarmer> initfarmer(){
+    std::vector<autoFarmer> f;
+    autoFarmer  f1{"2@300s", 300, 2},
+            f2{"5@600s", 600, 5},
+            f3{"12@1200s", 1200, 12};
+    f.push_back(f1);
+    f.push_back(f2);
+    f.push_back(f3);
+    return f;
+}
+std::vector<std::shared_ptr<profileMinimal>> initplayerlist()
+{
+    auto& app = application::get_app();
+    auto profileList = readBasicPlayers(app.getFarmList(), app.getBoostList());
+    auto profileList2 = readHardcorePlayers();
+    profileList.insert(std::end(profileList), std::begin(profileList2), std::end(profileList2));
+    return profileList;
+}
+
 
 void playCycle(std::shared_ptr<profileMinimal> currentProfile)
 {
@@ -391,13 +352,64 @@ void buyCycle(const std::shared_ptr<profileMinimal>& currentProfile, const std::
     }
 }
 
+void quitGame(std::vector<std::shared_ptr<profileMinimal>>  l, const std::shared_ptr<profileMinimal> currentProfile) {
+    std::ifstream f1("userdata/players.txt");
+    if (f1.good()) {
+        fs::remove("userdata/players_obsolete.txt");
+        fs::copy("userdata/players.txt", "userdata/players_obsolete.txt");
+    }
+    f1.close();
+
+    std::ifstream f2("userdata/hardcoreplayers.txt");
+    if (f2.good()) {
+        fs::remove("userdata/hardcoreplayers_obsolete.txt");
+        fs::copy("userdata/hardcoreplayers.txt", "userdata/hardcoreplayers_obsolete.txt");
+    }
+    f2.close();
+    for (size_t i = 0; i < l.size(); i++) {
+        if (l[i]->getName() == currentProfile->getName())
+            l.erase(l.begin() + i);
+    }
+    l.push_back(currentProfile);
+    std::ofstream basicoutput("userdata/players.txt");
+    std::ofstream hardcoreoutput("userdata/hardcoreplayers.txt");
+    for (const auto& i: l) {
+        std::shared_ptr profile = std::dynamic_pointer_cast<normalProfile>(i);
+        //auto* profile = dynamic_pointer_cast<normalProfile*> (i);
+        if (profile != nullptr) {
+            basicoutput << profile->getName() << "\n";
+            basicoutput << profile->getBal() << "\n";
+            for (const auto& j: profile->getFarmers()) {
+                basicoutput << j.getName() << " ";
+            }
+            basicoutput << "\n";
+            for (auto j: profile->getCount()) {
+                basicoutput << j << " ";
+            }
+            basicoutput << "\n";
+            for (size_t j = 0; j < profile->getBoosts().size(); j++) {
+                basicoutput << profile->getBoosts()[j].getName() << " " << profile->getBoosts()[j].getUses() << " ";
+            }
+            basicoutput << "\n";
+        }
+        else {
+            std::shared_ptr profilehardcore = std::dynamic_pointer_cast<hardcoreProfile>(i);
+            hardcoreoutput << profilehardcore->getName() << "\n" << profilehardcore->getBal() << "\n";
+        }
+    }
+}
+
+
 int main()
 {
-    std::vector<boost> b = initboost();
-    std::vector<std::shared_ptr<profileMinimal>>  profileList;
+    auto& app = application::get_app();
+    //std::vector<boost> boostList = initboost();
+    //std::vector<autoFarmer> farmList = initfarmer();
+    //std::vector<std::shared_ptr<profileMinimal>> profileList;
 //    std::vector<hardcoreProfile>  hardcorePlayers;
-    std::vector<autoFarmer> farm = initfarmer();
-    std::shared_ptr<profileMinimal> currentProfile;
+    app.setBoostList(initboost());
+    app.setFarmList(initfarmer());
+    //std::shared_ptr<profileMinimal> currentProfile;
     std::string userInput;
     bool logged = false;
     int failcount = 0;
@@ -407,9 +419,7 @@ int main()
         if(!logged) // login, but there is no logout feature yet
         {
             std::cout << "Choose a profile or type \'new\' / \'new hardcore\' to create a new profile\n";
-            profileList = readBasicPlayers(farm, b);
-            auto profileList2 = readHardcorePlayers();
-            profileList.insert(std::end(profileList), std::begin(profileList2), std::end(profileList2));
+            app.setProfileList(initplayerlist());
 //            hardcorePlayers = readHardcorePlayers();
             while(true) // profile selection loop
             {
@@ -426,7 +436,7 @@ int main()
                             //bool nameused = false;
                             if(userInput.length() < 2)
                                 throw naming_error{"This name is too short. Give me antoher one.\n"};
-                            for (auto i: profileList) {
+                            for (auto i: app.getProfileList()) {
                                 if (i->getName() == userInput) {
                                     throw naming_error{"This name is already on the list. Give me antoher one.\n"};
 //                                nameused = true;
@@ -437,8 +447,8 @@ int main()
 //                        if (!nameused)
 //                        {
                             normalProfile aup{userInput};
-                            currentProfile = aup.clone();
-                            profileList.push_back(currentProfile);
+                            app.setCurrentProfile(aup.clone());
+                            app.addToProfileList(aup.clone());
                             logged = true;
                             break;
 //                        }
@@ -461,7 +471,7 @@ int main()
                             //bool nameused = false;
                             if(userInput.length() < 2)
                                 throw naming_error{"This name is too short. Give me antoher one.\n"};
-                            for (auto i: profileList) {
+                            for (auto i: app.getProfileList()) {
                                 if (i->getName() == userInput) {
                                     throw naming_error{"This name is already on the list. Give me antoher one.\n"};
 //                                nameused = true;
@@ -472,8 +482,8 @@ int main()
 //                        if (!nameused)
 //                        {
                             hardcoreProfile aup{userInput};
-                            currentProfile = aup.clone();
-                            profileList.push_back(currentProfile);
+                            app.setCurrentProfile(aup.clone());
+                            app.addToProfileList(aup.clone());
                             logged = true;
                             break;
 //                        }
@@ -490,12 +500,12 @@ int main()
                 {
 
                     bool matching = false;
-                    for(auto i : profileList)
+                    for(auto i : app.getProfileList())
                     {
                         if(userInput == i->getName())
                         {
                             matching = true;
-                            currentProfile = i;
+                            app.setCurrentProfile(i);
                             std::cout << "profile selected: " << userInput << "\n";
                             break;
                         }
@@ -518,30 +528,30 @@ int main()
         while(true) // most user interaction happens here
         {
             rlutil::cls();
-            std::cout << "Yo. Choose an option. Playing on profile "<< currentProfile->getName() << "\n";
+            std::cout << "Yo. Choose an option. Playing on profile "<< app.getCurrentProfile()->getName() << "\n";
             mainMenu();
             std::cin >> userInput;
             if(userInput[0] == 'q' || userInput[0] == 'Q')
             {
                 if(!logged) rlutil::msleep(2); // just to pass cppcheck on clang 11
-                quitGame(profileList, currentProfile);
+                quitGame(app.getProfileList(), app.getCurrentProfile());
                 return 0;
             }
             else if(userInput[0] == 'c' || userInput[0] == 'C')
             {
-                auto aup = currentProfile->clone();
-                aup->setName("copy of " + currentProfile->getName());
-                profileList.push_back(aup);
+                auto aup = app.getCurrentProfile()->clone();
+                aup->setName("copy of " + app.getCurrentProfile()->getName());
+                app.addToProfileList(aup);
             }
             else if(userInput[0] == 'p' || userInput[0] == 'P') // play cycle
             {
                 getReady();
-                playCycle(currentProfile);
+                playCycle(app.getCurrentProfile());
             }
             else if(userInput[0] == 's' || userInput[0] == 'S')
             {
                 try{
-                    buyCycle(currentProfile, b, farm);
+                    buyCycle(app.getCurrentProfile(), app.getBoostList(), app.getFarmList());
                 }
                 catch(shop_error& err)
                 {
@@ -557,3 +567,4 @@ int main()
 
     return 0;
 }
+
