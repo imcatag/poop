@@ -15,6 +15,7 @@
 #include <filesystem>
 #include <memory>
 #include <fstream>
+#include <sstream>
 
 namespace fs = std::filesystem;
 
@@ -103,7 +104,7 @@ std::string collectionToString(T col)
         ss << i << " ";
     }
     return ss.str();
-};
+}
 
 void application::playCycle() {
     const int letterVal[] = {1, 3, 3, 2, 1, 4,

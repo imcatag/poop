@@ -8,7 +8,7 @@ class wordlist {
 private:
     wordlist() = default;
     std::vector<std::string> wl;
-    const int arrsize = 5584;
+    int arrsize = 5584;
 public:
     void init();
     wordlist(const wordlist&) = delete;
