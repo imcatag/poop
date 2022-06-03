@@ -409,8 +409,9 @@ std::vector<std::shared_ptr<profileMinimal>> application::readBasicPlayers(){
 
 std::vector<std::string> application::getVectorOfProfileNames() {
     std::vector<std::string> s;
-    for(auto i : profileList)
-        s.push_back(i->getName());
+//    for(auto i : profileList)
+//        s.push_back(i->getName());
+    std::for_each(profileList.begin(), profileList.end(), [&](const std::shared_ptr<profileMinimal>& i) { s.push_back(i->getName()); });
     return s;
 }
 
