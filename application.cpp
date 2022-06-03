@@ -19,6 +19,28 @@
 
 namespace fs = std::filesystem;
 
+template <typename T>
+std::string collectionToString(T col)
+{
+    std::stringstream ss;
+    for(auto i : col)
+    {
+        ss << i << " ";
+    }
+    return ss.str();
+}
+
+template<>
+std::string collectionToString<std::vector<std::shared_ptr<profileMinimal>>> (std::vector<std::shared_ptr<profileMinimal>> col)
+{
+    std::stringstream ss;
+    for(auto i : col)
+    {
+        ss << i->getName() << " ";
+    }
+    return ss.str();
+}
+
 void application::setBoostList(const std::vector<boost>& boostList_) {
     boostList = boostList_;
 }
@@ -95,27 +117,7 @@ void application::quitGame() {
     }
 }
 
-template <typename T>
-std::string collectionToString(T col)
-{
-    std::stringstream ss;
-    for(auto i : col)
-    {
-        ss << i << " ";
-    }
-    return ss.str();
-}
 
-template<>
-std::string collectionToString<std::vector<std::shared_ptr<profileMinimal>>> (std::vector<std::shared_ptr<profileMinimal>> col)
-{
-    std::stringstream ss;
-    for(auto i : col)
-    {
-        ss << i->getName() << " ";
-    }
-    return ss.str();
-}
 
 void application::playCycle() {
     const int letterVal[] = {1, 3, 3, 2, 1, 4,
@@ -131,11 +133,8 @@ void application::playCycle() {
             randomWords<10,12> rw;
             auto rwl = rw.getRandomWords();
             int rwnr = rwl.size();
-            for (int i = 0; i < rwnr; i++) {
-                if (i != 0) s += " ";
-                s = s + rwl[i];
-            }
-            std::cout << collectionToString(rwl) << "\n";
+            s = collectionToString(rwl);
+            std::cout << s << "\n";
             getline(std::cin, userInput);
             if (userInput == "q" || userInput == "Q" || userInput.empty())
                 break;

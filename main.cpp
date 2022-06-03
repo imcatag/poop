@@ -22,10 +22,23 @@
 #include "profileMinimal.h"
 #include "hardcoreProfile.h"
 #include "application.h"
+#include "randomWords.h"
 
 
 using Random = effolkronium::random_static;
 namespace fs = std::filesystem;
+
+template <typename T>
+std::string collectionToString(T col)
+{
+    std::stringstream ss;
+    for(auto i : col)
+    {
+        ss << i << " ";
+    }
+    return ss.str();
+}
+
 
 void mainMenu()
 {
@@ -49,7 +62,24 @@ void getReady()
     getline(std::cin, temp1);
     rlutil::cls();
 }
-
+void tutorial(){
+    rlutil::cls();
+    std::cout << "NEW PROFILE DETECTED. TIME FOR TUTORIAL.\n\n";
+    rlutil::msleep(1000);
+    std::cout << "Your job is to type the words on the screen.\n\n";
+    rlutil::msleep(1000);
+    std::cout << "If you do a good job you will be awarded points.\n\n";
+    rlutil::msleep(1000);
+    std::cout << "If you do a bad job you will either recieve 0 points or an invalid length warning.\n\n";
+    rlutil::msleep(1000);
+    std::cout << "Here's some examples:\n\n";
+    randomWords<12,12> rw;
+    std::cout << collectionToString(rw.getRandomWords()) << "\n\n";
+    std::cout << "^ You're supposed to type all that in, ideally with no mistakes. ^\n\n\n";
+    rlutil::msleep(1000);
+    std::cout << "That's all for the tutorial. It's time for you to play.\n\nPress any key to continue...";
+    rlutil::anykey();
+}
 
 
 int main()
@@ -94,7 +124,10 @@ int main()
                             normalProfile aup{userInput};
                             app.setCurrentProfile(aup.clone());
                             app.addToProfileList(aup.clone());
+                            tutorial();
                             logged = true;
+
+
                             break;
                         }
                         catch (app_error &err) {
@@ -129,6 +162,7 @@ int main()
                             app.setCurrentProfile(aup.clone());
                             app.addToProfileList(aup.clone());
                             logged = true;
+                            tutorial();
                             break;
 //                        }
                         }

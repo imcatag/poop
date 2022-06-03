@@ -7,9 +7,14 @@
 
 
 #include <vector>
+#include <sstream>
 #include <string>
+#include <memory>
 #include "wordlist.h"
 #include "ext/random.hpp"
+#include "profileMinimal.h"
+
+
 
 template<int T, int U>
 class randomWords{
