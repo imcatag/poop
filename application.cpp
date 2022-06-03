@@ -8,8 +8,8 @@
 #include "application.h"
 #include "normalProfile.h"
 #include "hardcoreProfile.h"
-#include "ext/random.hpp"
 #include "errors.h"
+#include "randomWords.h"
 #include "wordlist.h"
 #include "ext/rlutil/rlutil.h"
 #include <filesystem>
@@ -17,7 +17,6 @@
 #include <fstream>
 
 namespace fs = std::filesystem;
-using Random = effolkronium::random_static;
 
 void application::setBoostList(const std::vector<boost>& boostList_) {
     boostList = boostList_;
@@ -95,6 +94,18 @@ void application::quitGame() {
     }
 }
 
+template <typename T>
+std::string collectionToString(T col)
+{
+    std::stringstream ss;
+    for(auto i : col)
+    {
+        ss << i << " ";
+    }
+    return ss.str();
+};
+
+
 void application::playCycle() {
     const int letterVal[] = {1, 3, 3, 2, 1, 4,
                              2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10,
@@ -105,15 +116,15 @@ void application::playCycle() {
             std::string s, userInput;
 
             int totalvalue = 0;
-            int numberowords = Random::get(10, 12);
             int nonmatch = 0;
-
-            for (int i = 1; i <= numberowords; i++) {
-                int wordrand = Random::get(0, int(arrsize - 1));
-                if (i != 1) s += " ";
-                s = s + wl[wordrand];
+            randomWords<10,12> rw;
+            auto rwl = rw.getRandomWords();
+            int rwnr = rwl.size();
+            for (int i = 0; i < rwnr; i++) {
+                if (i != 0) s += " ";
+                s = s + rwl[i];
             }
-            std::cout << s << "\n";
+            std::cout << collectionToString(rwl) << "\n";
             getline(std::cin, userInput);
             if (userInput == "q" || userInput == "Q" || userInput.empty())
                 break;
@@ -134,7 +145,7 @@ void application::playCycle() {
                         totalvalue += letterVal[i - 'a'];
                     }
                 }
-                int w = int(max(0, numberowords * totalvalue * (100 - nonmatch * nonmatch) / 100 / nr) *
+                int w = int(max(0, (rwnr + 1) * totalvalue * (100 - nonmatch * nonmatch) / 100 / nr) *
                             currentProfile->multi()) - 2 * abs(int(s.size()) - int(userInput.size()));
                 currentProfile->changeBal(w);
                 std::cout << w << "\n";
@@ -220,6 +231,9 @@ void application::init() {
     setBoostList(initboost());
     setFarmList(initfarmer());
     setProfileList(initplayerlist());
+    auto& app = application::get_app();
+    std::cout << "/////////////////////QUICK LIST/////////////////////\n" << collectionToString(app.getVectorOfProfileNames()) << "\n";
+
 }
 
 std::vector<boost> application::initboost() {
@@ -391,5 +405,12 @@ std::vector<std::shared_ptr<profileMinimal>> application::readBasicPlayers(){
     }
     f.close();
     return l;
+}
+
+std::vector<std::string> application::getVectorOfProfileNames() {
+    std::vector<std::string> s;
+    for(auto i : profileList)
+        s.push_back(i->getName());
+    return s;
 }
 

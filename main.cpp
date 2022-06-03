@@ -27,7 +27,6 @@
 using Random = effolkronium::random_static;
 namespace fs = std::filesystem;
 
-
 void mainMenu()
 {
     std::cout << "\np to play\ns for shop\nc to create a copy of current profile\nq to save and quit\n";
@@ -54,6 +53,8 @@ void getReady()
 int main()
 {
     auto& app = application::get_app();
+    auto& wl = wordlist::get_wordlist();
+    wl.init();
     app.init();
 
     std::string userInput;
