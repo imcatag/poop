@@ -72,7 +72,7 @@
 RLUTIL_INLINE int getch(void) {
 	// Here be magic.
 	struct termios oldt, newt;
-	int ch;
+	int ch = 0;
 	tcgetattr(STDIN_FILENO, &oldt);
 	newt = oldt;
 	newt.c_lflag &= ~(ICANON | ECHO);
