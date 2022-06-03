@@ -26,7 +26,7 @@ public:
     normalProfile(const std::string& name_, long long int balance_, const std::vector<autoFarmer>& farmers_, const std::vector<int>& count_,const std::deque<boost>& boosts_);
     normalProfile& operator=(const normalProfile& other);
     normalProfile(const normalProfile& other);
-    void addBoost(const boost& b);
+    void addBoost(const boost& b) override;
     float multi() override;
 //    [[maybe_unused]] char profileType() override;
     void print(std::ostream &os) const override;
