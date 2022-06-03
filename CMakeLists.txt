@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-###############################################################################
+###################################################################s############
 
 # external dependencies
 #include(FetchContent)
@@ -54,7 +54,8 @@ if(APPLE)
     # endif()
 elseif(UNIX)
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-        # we cannot mix sanitizers with Valgrind
+        set(GH_ACTIONS 1)
+        target_compile_definitions(oop PRIVATE GH_ACTIONS=${GH_ACTIONS})
     elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
         if("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "12.")
             # check leaks on Linux since macOS does not support the leaks sanitizer yet
