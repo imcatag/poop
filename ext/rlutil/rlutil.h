@@ -70,6 +70,9 @@
 /// Get character without waiting for Return to be pressed.
 /// Windows has this in conio.h
 RLUTIL_INLINE int getch(void) {
+    #ifdef GH_ACTIONS
+    return std::getchar();
+    #else
 	// Here be magic.
 	struct termios oldt, newt;
 	int ch = 0;
@@ -80,6 +83,7 @@ RLUTIL_INLINE int getch(void) {
 	ch = getchar();
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 	return ch;
+    #endif
 }
 
 /// Function: kbhit

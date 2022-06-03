@@ -203,6 +203,7 @@ jobs:
           CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S $GITHUB_WORKSPACE -B build \
             -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
             -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/artifacts \
+            -DGH_ACTIONS=1 \
             ${{ matrix.cmake_flags }}
 
       - name: Build
