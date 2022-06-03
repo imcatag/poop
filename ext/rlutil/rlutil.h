@@ -71,7 +71,7 @@
 /// Windows has this in conio.h
 RLUTIL_INLINE int getch(void) {
 	// Here be magic.
-	struct termios oldt, newt;
+	struct termios oldt{0}, newt{0};
 	int ch = 0;
 	tcgetattr(STDIN_FILENO, &oldt);
 	newt = oldt;
