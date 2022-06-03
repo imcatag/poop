@@ -21,7 +21,6 @@ private:
     std::vector<autoFarmer> farmList;
     std::shared_ptr<profileMinimal> currentProfile;
     std::vector<std::shared_ptr<profileMinimal>> profileList;
-    const int arrsize = 5584;
     std::vector<boost> initboost();
     std::vector<autoFarmer> initfarmer();
     std::vector<std::shared_ptr<profileMinimal>> initplayerlist();

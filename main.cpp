@@ -57,8 +57,6 @@ int main()
     auto& app = application::get_app();
     auto& wl = wordlist::get_wordlist();
     wl.init();
-    std::cout << wl.getArrsize(); // to fix arrsize unused error on clang
-    rlutil::cls();
 
     app.init();
 
