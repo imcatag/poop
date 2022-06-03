@@ -39,7 +39,7 @@ public:
 
     void setCurrentProfile(std::shared_ptr<profileMinimal> currentProfile);
 
-    std::vector<std::string> getVectorOfProfileNames();
+    //std::vector<std::string> getVectorOfProfileNames();
 
     //[[nodiscard]] const std::vector<boost> &getBoostList() const;
     //[[nodiscard]] const std::vector<autoFarmer> &getFarmList() const;

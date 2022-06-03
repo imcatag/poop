@@ -106,6 +106,17 @@ std::string collectionToString(T col)
     return ss.str();
 }
 
+template<>
+std::string collectionToString<std::vector<std::shared_ptr<profileMinimal>>> (std::vector<std::shared_ptr<profileMinimal>> col)
+{
+    std::stringstream ss;
+    for(auto i : col)
+    {
+        ss << i->getName() << " ";
+    }
+    return ss.str();
+}
+
 void application::playCycle() {
     const int letterVal[] = {1, 3, 3, 2, 1, 4,
                              2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10,
@@ -231,8 +242,7 @@ void application::init() {
     setBoostList(initboost());
     setFarmList(initfarmer());
     setProfileList(initplayerlist());
-    auto& app = application::get_app();
-    std::cout << "/////////////////////QUICK LIST/////////////////////\n" << collectionToString(app.getVectorOfProfileNames()) << "\n";
+    std::cout << "/////////////////////QUICK LIST/////////////////////\n" << collectionToString(profileList) << "\n";
 
 }
 
@@ -407,11 +417,11 @@ std::vector<std::shared_ptr<profileMinimal>> application::readBasicPlayers(){
     return l;
 }
 
-std::vector<std::string> application::getVectorOfProfileNames() {
-    std::vector<std::string> s;
-//    for(auto i : profileList)
-//        s.push_back(i->getName());
-    std::for_each(profileList.begin(), profileList.end(), [&](const std::shared_ptr<profileMinimal>& i) { s.push_back(i->getName()); });
-    return s;
-}
+//std::vector<std::string> application::getVectorOfProfileNames() {
+//    std::vector<std::string> s;
+////    for(auto i : profileList)
+////        s.push_back(i->getName());
+//    std::for_each(profileList.begin(), profileList.end(), [&](const std::shared_ptr<profileMinimal>& i) { s.push_back(i->getName()); });
+//    return s;
+//}
 
